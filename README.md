@@ -1,2 +1,3 @@
-# lamp-contact-manager
+# LAMP Contact Manager
+
 LAMP-based application Contact Manager
