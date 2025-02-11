@@ -4,13 +4,32 @@
 	
     //Variable data from input
     //Assumed Names
-    $userID = $inData["userID"];
-    $firstName = $inData["firstName"];
-    $lastName = $inData["lastName"];
-    $email = $inData["email"];
-    $phone = $inData["phone"];
+    $userID = $inData["USER_ID"];
+    $firstName = $inData["FIRST"];
+    $lastName = $inData["LAST"];
+    $email = $inData["EMAIL"];
+    $phone = $inData["PHONE_NUMBER"];
 
-    //Check for missing fields(?)
+        /*
+        Database Table Content Assumptions
+
+        User: {
+            ID: int
+            FIRST: str
+            LAST: str
+            USER: str
+            PASSWORD: str
+        }
+
+        Contact: {
+            ID: int
+            FIRST: str
+            LAST: str
+            EMAIL: str
+            PHONE_NUMBER: str
+            USER_ID: int
+        }
+        */
 
     //Default credentials
 	$conn = new mysqli("localhost", "", "", "");
@@ -20,75 +39,13 @@
 	} 
 	else
 	{
-        //Get selfcontactID from userID
-        $stmt = $conn->prepare("SELECT selfContactID FROM User WHERE ID = ?");
-        $stmt->bind_param("i", $userID);
-        $stmt->execute();
-        $result = $stmt->get_result();
-        if( $row = $result->fetch_assoc()  )
-		{
-            $selfContactID = $row["selfContactID"];
+        //Add the contact
+        $stmt = $conn->prepare("INSERT into CONTACTS (FIRST, LAST, EMAIL, PHONE_NUMBER, USER_ID) VALUES(?,?,?,?,?)");
+        $stmt->bind_param("s,s,s,s,i", $firstName, $lastName, $email, $phone, $userID);
 
-            //Check if user is adding themselves
-            $selfstmt = $conn->prepare("SELECT ID FROM Contact WHERE firstName = ? AND lastName = ? AND email = ? AND phone = ? LIMIT 1");
-            $selfstmt->bind_param("ssss", $firstName, $lastName, $email, $phone);
-            $selfstmt->execute();
-            $selfstmt->bind_result($existContactID);
-            $selfstmt->fetch();
-            $selfstmt->close();
+        if (!$stmt->execute()):
+            returnwithError("Failed to add contact.");
 
-            if ($existContactID)
-            {
-                if ($existContactID == $selfContactID)
-                {
-                    returnWithError("Cannot add self as contact.")
-                }
-    
-                //Check if contact is already linked to user
-                $selfstmt = $conn->prepare("SELECT 1 FROM UserContacts WHERE UserID = ? AND ContactID = ?");
-                $selfstmt->bind_param("ii", $userID, $existContactID);
-                $selfstmt->execute();
-                $selfstmt->store_result();
-    
-                if ($selfstmt->num_rows > 0)
-                {
-                    returnWithError("Contact is already linked to user.")
-                }
-    
-                //Link existing contact to user
-                $selfstmt = $conn->prepare("INSERT into UserContacts (UserID, ContactID) VALUES(?,?)");
-                $selfstmt->bind_param("ii", $userID, $existContactID);
-                $selfstmt->execute();
-    
-                //Create new contact
-                $selfstmt = $conn->prepare("INSERT into Contacts (FirstName, LastName, Email, Phone) VALUES(?,?,?,?)");
-                $selfstmt->bind_param("ssss", $firstName, $lastName, $email, $phone);
-                $selfstmt->execute();
-
-                //Bind to user
-                if ($selfstmt->execute())
-                {
-                    $contactID = $stmt->insert_id; //inserted contact id
-                    $linkstmt = $conn->prepare("INSERT into UserContacts (UserID, ContactID) VALUES(?,?)");
-                    $linkstmt->bind_param("ii", $userID, $contactID);
-                    $linkstmt->execute();
-                    $linkstmt->close();
-                }
-                else
-                {
-                    returnWithError("Failed to create contact.");
-                }
-
-                $selfstmt->close();
-
-            }
-
-        }
-        else
-        {
-            returnWithError("User Not Found");
-        }
-        
 		$stmt->close();
 		$conn->close();
 		returnWithError("");
