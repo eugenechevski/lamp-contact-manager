@@ -4,12 +4,12 @@
 	$inData = getRequestInfo();
 
     $servername = "";
-    $username = "";
-    $password = "";
-    $dbname = "contact_manager";
+    $dbUsername = "";
+    $dbPassword = "";
+    $dbName = "contact_manager";
 
     // server, DB username, DB password, DB name 
-	$conn = new mysqli($servername, $username, $password, $dbname); 	
+	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);	
 	if( $conn->connect_error )
 	{
 		returnWithError( $conn->connect_error );
@@ -41,7 +41,7 @@
         // Retrieve the Users information based on login info
         $stmt = $conn->prepare("SELECT ID,FIRST,LAST FROM USERS WHERE USER=? AND PASSWORD=?");
 
-        // Test Setup
+        // For Testing
         // $testUser = "asmith";
         // $testPassword = "password1";
         // $stmt->bind_param("ss", $testUser, $testPassword);    
