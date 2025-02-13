@@ -55,7 +55,7 @@
             }
             else
             {
-                returnWithError("Contact not found.")
+                returnWithError("Contact not found.");
             }
         }
 
