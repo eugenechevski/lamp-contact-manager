@@ -1,6 +1,6 @@
 # LAMP Contact Manager
 
-Linux, Apache, MySQL, PHP
+Linux, Apache, MariaDB, PHP
 
 ## Features
 
