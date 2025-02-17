@@ -123,7 +123,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 formData.append("username", newUsername);
                 formData.append("password", newPassword);
 
-                fetch("api/create_account.php", {
+                fetch("api/addUser.php", {
                     method: "POST",
                     body: formData
                 })
@@ -132,7 +132,7 @@ document.addEventListener("DOMContentLoaded", function() {
                     if (data.success) {
                         window.location.href = "index.html";
                     } else {
-                        // alert("Account creation failed. Please try again.");
+                        alert("Account creation failed. Please try again.");
                     }
                 })
                 .catch(error => {
@@ -142,9 +142,4 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         })
     }
-
-    // // Optional: You can add behavior to redirect to the create account page
-    // createAccountLink.addEventListener("click", function(event) {
-    //     // You can add additional validation or handling before navigating if needed
-    // });
 });
