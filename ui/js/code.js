@@ -72,9 +72,9 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // window.location.href = "dashboard.html"; --- TODO add dashboard page
+                        window.location.href = "dashboard.html"; // --- TODO add dashboard page
                     } else {
-                        // alert("Login failed: " + data.message);
+                        alert("Login failed: " + data.message);
                     }
                 })
                 .catch(error => {
