@@ -32,7 +32,7 @@
         */
 
     //Default credentials
-	$conn = new mysqli("localhost", "", "", "");
+	$conn = new mysqli("localhost", "root", "", "contact_manager");
 	if ($conn->connect_error) 
 	{
 		returnWithError( $conn->connect_error );
@@ -41,10 +41,9 @@
 	{
         //Add the contact
         $stmt = $conn->prepare("INSERT into CONTACTS (FIRST, LAST, EMAIL, PHONE_NUMBER, USER_ID) VALUES(?,?,?,?,?)");
-        $stmt->bind_param("s,s,s,s,i", $firstName, $lastName, $email, $phone, $userID);
+        $stmt->bind_param("ssssi", $firstName, $lastName, $email, $phone, $userID);
 
-        if (!$stmt->execute()):
-            returnwithError("Failed to add contact.");
+        $stmt->execute();
 
 		$stmt->close();
 		$conn->close();
