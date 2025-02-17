@@ -3,7 +3,7 @@
 	$inData = getRequestInfo();
 	
     //Variable data from input
-    $contactID = $inData["contactID"];
+    $contactID = $inData["CONTACT_ID"];
 
         /*
         Database Table Content Assumptions
@@ -27,7 +27,7 @@
         */
 
     //Default credentials
-	$conn = new mysqli("localhost", "", "", "");
+	$conn = new mysqli("localhost", "root", "", "contact_manager");
 	if ($conn->connect_error) 
 	{
 		returnWithError( $conn->connect_error );
@@ -37,8 +37,7 @@
         $stmt = $conn->prepare("DELETE from CONTACTS where ID = ?");
 		$stmt->bind_param("i", $contactID);
 
-		if (!$stmt->execute()):
-            returnwithError("Failed to delete contact.");
+		$stmt->execute();
 
 		$stmt->close();
 		$conn->close();
@@ -49,7 +48,13 @@
 	{
 		return json_decode(file_get_contents('php://input'), true);
 	}
-	
+
+	function sendResultInfoAsJson( $obj )
+	{
+		header('Content-type: application/json');
+		echo $obj;
+	}
+
 	function returnWithError( $err )
 	{
 		$retValue = '{"error":"' . $err . '"}';
