@@ -4,7 +4,6 @@
     if (!isset($_GET["contactID"]))
     {
         returnwithError("Missing contactID");
-        exit();
     }
 
 
