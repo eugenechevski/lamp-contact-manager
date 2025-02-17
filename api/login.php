@@ -1,10 +1,14 @@
-
 <?php
 
 	$inData = getRequestInfo();
 
+    $servername = "";
+    $dbUsername = "";
+    $dbPassword = "";
+    $dbName = "contact_manager";
+
     // server, DB username, DB password, DB name 
-	$conn = new mysqli("localhost", "", "", ""); 	
+	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);	
 	if( $conn->connect_error )
 	{
 		returnWithError( $conn->connect_error );
@@ -17,67 +21,59 @@
 
         User: {
             ID: int
-            selfContactID: int
+            FIRST: str
+            LAST: str
+            USER: str
+            PASSWORD: str
         }
 
         Contact: {
             ID: int
-            firstName: str
-            lastName: str
-            email: str
-            phoneNumber: int / str (?)
-        }
-
-        (Junction Table / Many-to-Many)
-        UserContacts: {
-            UserID: int
-            ContactID: int
+            FIRST: str
+            LAST: str
+            EMAIL: str
+            PHONE_NUMBER: str
+            USER_ID: int
         }
         */
 
-        // Retrieve the selfContact, which holds UserID and selfContactID of the user in Contacts table
-        $stmt = $conn->prepare("SELECT ID,selfContactID FROM Users WHERE Login=? AND Password =?");
+        // Retrieve the Users information based on login info
+        $stmt = $conn->prepare("SELECT ID,FIRST,LAST FROM USERS WHERE USER=? AND PASSWORD=?");
 
-		$stmt->bind_param("ss", $inData["login"], $inData["password"]);
+        // For Testing
+        // $testUser = "asmith";
+        // $testPassword = "password1";
+        // $stmt->bind_param("ss", $testUser, $testPassword);    
+
+		$stmt->bind_param("ss", $inData["USER"], $inData["PASSWORD"]);
+
         $stmt->execute();
 		$result = $stmt->get_result();
 
 		if( $row = $result->fetch_assoc()  )
 		{
 			$userID = $row["ID"];
-            $selfContactID = $row["selfContactID"];
-            
-            // Retrieve selfContact details from Contacts table
-            // selfContactID should be normal ID in contacts table
-            $selfStmt = $conn->prepare("SELECT ID, firstName, lastName, email, phoneNumber FROM Contacts WHERE ID=?");
-            $selfStmt->bind_param("i", $selfContactID);
-            $selfStmt->execute();
-            $selfResult = $selfStmt->get_result();
+            $firstName = $row["FIRST"];
+            $lastName = $row["LAST"];
 
             $listOfContacts = [];
-            
-            if ($selfContact = $selfResult->fetch_assoc()) {
                 
-                // Retrieve and form listOfContacts using the junction table of Users and Contacts
-                // Assumes junction table is recording all UserID and ContactID relationships
-                $contactsStmt = $conn->prepare(
-                    "SELECT c.ID, c.firstName, c.lastName, c.email, c.phoneNumber FROM Contacts c 
-                    INNER JOIN UserContacts uc ON c.ID = uc.contactID 
-                    WHERE uc.userID = ?"
-                );
+            // Form the list of contacts by iterating through Contacts table, and finding all that have the correct USER_ID field
+            $contactsStmt = $conn->prepare(
+                "SELECT ID, FIRST, LAST, EMAIL, PHONE_NUMBER FROM CONTACTS WHERE USER_ID = ?"
+            );
 
-                $contactsStmt->bind_param("i", $userID);
-                $contactsStmt->execute();
-                $contactsResult = $contactsStmt->get_result();
-                
-                while ($contact = $contactsResult->fetch_assoc()) {
-                    $listOfContacts[] = $contact;
-                }
-                
-                returnWithInfo($selfContact, $listOfContacts);
-                
-                $contactsStmt->close();
+            $contactsStmt->bind_param("i", $userID);
+            $contactsStmt->execute();
+            $contactsResult = $contactsStmt->get_result();
+            
+            while ($contact = $contactsResult->fetch_assoc()) {
+                $listOfContacts[] = $contact;
             }
+            
+            returnWithInfo($userID, $firstName, $lastName, $listOfContacts);
+            
+            $contactsStmt->close();
 		}
 		else
 		{
@@ -101,14 +97,26 @@
 	
 	function returnWithError( $err )
 	{
-        $retValue = '{"id":0,"selfContact":null,"listOfContacts":[]","error":"' . $err . '"}';
+        $retValue = json_encode([
+            "id" => 0,
+            "first" => "",
+            "last" => "",
+            "listOfContacts" => [],
+            "error" => $err
+        ]);
 		sendResultInfoAsJson( $retValue );
 	}
 	
-	function returnWithInfo( $selfContact, $listOfContacts )
+	function returnWithInfo( $id, $firstName, $lastName, $listOfContacts )
 	{
-		$retValue = '{"id":' . $id . ',"selfContact":"' . $firstName . '","listOfContacts":"' . $listOfContacts . '","error":""}';
-		sendResultInfoAsJson( $retValue );
+		$retValue = json_encode([
+            "id" => $id,
+            "first" => $firstName,
+            "last" => $lastName,
+            "listOfContacts" => $listOfContacts, 
+            "error" => ""
+        ]);
+        sendResultInfoAsJson( $retValue );
 	}
 	
 ?>
