@@ -91,9 +91,9 @@ document.addEventListener("DOMContentLoaded", function() {
     if (createAccountForm) {
         createAccountForm.addEventListener("submit", function (event) {
             event.preventDefault();
-            const newUsername = document.getElementById("newUsername").value.trim();
-            const newPassword = document.getElementById("newPassword").value.trim();
-            const confirmPassword = document.getElementById("confirmPassword").value.trim();
+            const newUsername = document.getElementById("newUsername");
+            const newPassword = document.getElementById("newPassword")();
+            const confirmPassword = document.getElementById("confirmPassword")();
             const newUsernameError = document.getElementById("newUsernameError");
             const newPasswordError = document.getElementById("newPasswordError");
 
