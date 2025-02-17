@@ -91,11 +91,16 @@ document.addEventListener("DOMContentLoaded", function() {
     if (createAccountForm) {
         createAccountForm.addEventListener("submit", function (event) {
             event.preventDefault();
-            const newUsername = document.getElementById("newUsername");
-            const newPassword = document.getElementById("newPassword")();
-            const confirmPassword = document.getElementById("confirmPassword")();
-            const newUsernameError = document.getElementById("newUsernameError");
-            const newPasswordError = document.getElementById("newPasswordError");
+            const newUsername = document.getElementById("username").value;
+            console.log(newUsername);
+            const newPassword = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirmPassword").value;
+            console.log(newPassword);
+            console.log(confirmPassword);
+            const newUsernameError = document.getElementById("usernameError");
+            const newPasswordError = document.getElementById("passwordError");
+
+
 
             newUsernameError.style.display = 'none';
             newPasswordError.style.display = 'none';
@@ -123,7 +128,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 formData.append("username", newUsername);
                 formData.append("password", newPassword);
 
-                fetch("api/addUser.php", {
+                fetch("../../api/addUser.php", {
                     method: "POST",
                     body: formData
                 })
