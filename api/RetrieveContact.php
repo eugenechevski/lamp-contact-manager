@@ -1,9 +1,15 @@
 <?php
-    //Input data
-	$inData = getRequestInfo();
 	
-    //Variable data from input
-    $contactID = $inData["contactID"];
+    //Check for id
+    if (!isset($_GET["contactID"]))
+    {
+        returnwithError("Missing contactID");
+        exit();
+    }
+
+
+    //get contact id
+    $contactID = intval($_GET["contactID"]);
 
         /*
         Database Table Content Assumptions
@@ -27,7 +33,7 @@
         */
 
     //Default credentials
-	$conn = new mysqli("localhost", "", "", "");
+	$conn = new mysqli("localhost", "root", "", "contact_manager");
 	if ($conn->connect_error) 
 	{
 		returnWithError( $conn->connect_error );
@@ -63,11 +69,6 @@
 		$conn->close();
 		returnWithError("");
 	}
-
-	function getRequestInfo()
-	{
-		return json_decode(file_get_contents('php://input'), true);
-	}
 	
 	function returnWithError( $err )
 	{
@@ -75,13 +76,19 @@
 		sendResultInfoAsJson( $retValue );
 	}
 
+    function sendResultInfoAsJson( $obj )
+	{
+		header('Content-type: application/json');
+		echo $obj;
+	}
+
     function returnWithInfo( $id, $firstName, $lastName, $email, $phone)
 	{
 		$retValue = json_encode([
-            "id" => $contactID,
+            "id" => $id,
             "first" => $firstName,
             "last" => $lastName,
-            "email" => $listOfContacts, 
+            "email" => $email, 
             "phone" => $phone,
             "error" => ""
         ]);
