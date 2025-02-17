@@ -1,10 +1,17 @@
 <?php
+
     //Input data
 	$inData = getRequestInfo();
 	
     //Variable data from input
-    //Assumed Names
-    $contactID = $inData["contactID"];
+    $contactID = $inData["CONTACT_ID"];
+
+    //Check for id
+    if (!$contactID)
+    {
+        returnwithError("Missing contactID");
+    }
+
     $firstName = $inData["FIRST"];
     $lastName = $inData["LAST"];
     $email = $inData["EMAIL"];
@@ -32,7 +39,7 @@
         */
 
     //Default credentials
-	$conn = new mysqli("localhost", "", "", "");
+	$conn = new mysqli("localhost", "root", "", "contact_manager");
 	if ($conn->connect_error) 
 	{
 		returnWithError( $conn->connect_error );
@@ -46,14 +53,45 @@
 		returnWithError("");
 	}
 
-    //Update function with optional parameters
-    function updateContact($contactID, $firstName = null, $lastName = null, $email = null, $phone = null)
+    function updateContact($contactID, $firstName, $lastName, $email, $phone)
     {
-        $stmt = $conn->prepare("UPDATE CONTACTS SET FIRST = :firstName, LAST = :lastName, EMAIL = :email, PHONE_NUMBER = :phone WHERE contactID = :contactID");
-        $stmt->bind_param(:firstName, $firstName);
-        $stmt->bind_param(:lastName, $lastName);
-        $stmt->bind_param(:email, $email);
-        $stmt->bind_param(:phone, $phone);
+        global $conn;
+    
+        $updates = [];
+        $params = [];
+        $types = "";
+
+        //Support optional parameters
+        if ($firstName !== null) 
+            { 
+                $updates[] = "FIRST = ?"; $params[] = $firstName; $types .= "s"; 
+            }
+        if ($lastName !== null) 
+            { 
+            $updates[] = "LAST = ?"; $params[] = $lastName; $types .= "s"; 
+            }
+        if ($email !== null) 
+            { 
+                $updates[] = "EMAIL = ?"; $params[] = $email; $types .= "s"; 
+            }
+        if ($phone !== null) 
+            { 
+                $updates[] = "PHONE_NUMBER = ?"; $params[] = $phone; $types .= "s"; 
+            }
+
+        $params[] = $contactID;
+        $types .= "i";
+
+        if (empty($updates)) {
+            returnWithError("No fields provided.");
+            return;
+        }
+
+        //combine parameters into request
+        $request = "UPDATE CONTACTS SET " . implode(", ", $updates) . " WHERE ID = ?";
+
+        $stmt = $conn->prepare($request);
+        $stmt->bind_param($types, ...$params);
 
         $stmt->execute();
 
