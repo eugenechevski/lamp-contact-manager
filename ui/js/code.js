@@ -52,8 +52,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    const obj = JSON.parse(data);
-
                     if (data.response.success) {
                         window.location.href = "./ui/pages/dashboard.html";
                     } else {
