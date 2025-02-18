@@ -36,39 +36,11 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // If valid, submit form
             if (isValid) {
-                // --- Code for testing validation without backend ---
-                //     mockLoginRequest(username, password);
-                //
-                //
-                // // Mock the server response
-                // function mockLoginRequest(username, password) {
-                //     const mockResponse = username === "admin" && password === "password123"
-                //         ? { success: true, message: "Login successful." }
-                //         : { success: false, message: "Invalid username or password." };
-                //
-                //     handleLoginResponse(mockResponse);
-                // }
-                //
-                // // Pop up feedback to the user
-                // function handleLoginResponse(response) {
-                //     if (response.success) {
-                //         alert(response.message);
-                //     } else {
-                //         alert(response.message);
-                //     }
-                // }
-
-                // --- Code for validating login with backend ---
                 // Prepare data to be sent
                 const requestData = {
-                    username: username,
-                    password: password
+                    USER: username,
+                    PASSWORD: password
                 };
-
-                // --- form data ---
-                // const formData = new FormData();
-                // formData.append("username", username);
-                // formData.append("password", password);
 
                 // Send data to backend (login.php)
                 fetch("api/login.php", {
@@ -81,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        window.location.href = "dashboard.html";
+                        window.location.href = "./ui/page/dashboard.html";
                     } else {
                         alert("Login failed: " + data.message);
                     }
@@ -159,21 +131,6 @@ document.addEventListener("DOMContentLoaded", function() {
                 // Log JSON data
                 console.log("Sending JSON:", JSON.stringify(userData));
 
-
-
-                // --- form data ---
-                // const formData = new FormData();
-                // formData.append("firstName", firstName);
-                // formData.append("lastName", lastName);
-                // formData.append("username", newUsername);
-                // formData.append("password", newPassword);
-                //
-                // // Print out formData
-                // for (const pair of formData.entries()) {
-                //     console.log(`${pair[0]}: ${pair[1]}`);
-                // }
-
-
                 // Submit data to API as JSON
                 fetch("../../api/addUser.php", {
                     method: "POST",
@@ -185,7 +142,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        window.location.href = "index.html";
+                        window.location.href = "../../index.html";
                     } else {
                         alert("Account creation failed. Please try again.");
                     }
