@@ -38,8 +38,8 @@ document.addEventListener("DOMContentLoaded", function() {
             if (isValid) {
                 // Prepare data to be sent
                 const requestData = {
-                    USER: username,
-                    PASSWORD: password
+                    username: username,
+                    password: password
                 };
 
                 // Send data to backend (login.php)
@@ -52,8 +52,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        window.location.href = "./ui/page/dashboard.html";
+                    if (data.response.success) {
+                        window.location.href = "./ui/pages/dashboard.html";
                     } else {
                         alert("Login failed: " + data.message);
                     }
