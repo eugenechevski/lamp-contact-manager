@@ -13,6 +13,20 @@
 
         <div class="login-form">
             <form id="createAccountForm" action="../../api/createUser.php" method="POST">
+                <div class="d-flex gap-3">
+                    <div class="flex-grow-1">
+                        <label for="firstName" class="form-label">First Name</label>
+                        <input type="text" id="firstName" name="firstName" class="form-control">
+                        <div id="firstNameError" class="error-message" style="color: red; display: none;"></div>
+                    </div>
+
+                    <div class="flex-grow-1">
+                        <label for="lastName" class="form-label">Last Name</label>
+                        <input type="text" id="lastName" name="lastName" class="form-control">
+                        <div id="lastNameError" class="error-message" style="color: red; display: none;"></div>
+                    </div>
+                </div>
+
                 <div class="mb-3">
                     <label for="username" class="form-label">Username</label>
                     <input type="text" id="username" name="username" class="form-control">
