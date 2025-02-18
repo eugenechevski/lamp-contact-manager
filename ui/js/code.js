@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const loginForm = document.getElementById("loginForm");
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
-    // const createAccountLink = document.querySelector(".create-account a");
+
     const usernameError = document.getElementById("usernameError");
     const passwordError = document.getElementById("passwordError");
 
@@ -13,8 +13,8 @@ document.addEventListener("DOMContentLoaded", function() {
         loginForm.addEventListener("submit", function (event) {
             event.preventDefault(); // Prevent refreshing
 
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
+            const username = usernameInput.value;
+            const password = passwordInput.value;
 
             // Clear previous error messages
             usernameError.style.display = 'none';
@@ -58,21 +58,30 @@ document.addEventListener("DOMContentLoaded", function() {
                 //     }
                 // }
 
-                // --- Code for validating login with backend
+                // --- Code for validating login with backend ---
                 // Prepare data to be sent
-                const formData = new FormData();
-                formData.append("username", username);
-                formData.append("password", password);
+                const requestData = {
+                    username: username,
+                    password: password
+                };
+
+                // --- form data ---
+                // const formData = new FormData();
+                // formData.append("username", username);
+                // formData.append("password", password);
 
                 // Send data to backend (login.php)
                 fetch("api/login.php", {
                     method: "POST",
-                    body: formData
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(requestData)
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        window.location.href = "dashboard.html"; // --- TODO add dashboard page
+                        window.location.href = "dashboard.html";
                     } else {
                         alert("Login failed: " + data.message);
                     }
@@ -94,25 +103,22 @@ document.addEventListener("DOMContentLoaded", function() {
             const firstName = document.getElementById("firstName").value;
             const lastName = document.getElementById("lastName").value;
             const newUsername = document.getElementById("username").value;
-            // console.log(newUsername);
             const newPassword = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
-            // console.log(newPassword);
-            // console.log(confirmPassword);
+
             const firstNameError = document.getElementById("firstNameError");
             const lastNameError = document.getElementById("lastNameError");
             const newUsernameError = document.getElementById("usernameError");
             const newPasswordError = document.getElementById("passwordError");
 
-
             firstNameError.style.display = 'none';
             lastNameError.style.display = 'none';
             newUsernameError.style.display = 'none';
             newPasswordError.style.display = 'none';
-            // confirmPasswordError.style.display = 'none';
 
             let isValid = true;
 
+            // Check that all fields are filled out
             if (!firstName) {
                 firstNameError.textContent = "Please enter your first name.";
                 firstNameError.style.display = 'block';
@@ -141,20 +147,40 @@ document.addEventListener("DOMContentLoaded", function() {
                 isValid = false;
             }
 
+            // If all fields are correct, submit to API
             if (isValid) {
-                const formData = new FormData();
-                formData.append("firstName", firstName);
-                formData.append("lastName", lastName);
-                formData.append("username", newUsername);
-                formData.append("password", newPassword);
+                const userData = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    username: newUsername,
+                    password: newPassword
+                };
 
-                for (const pair of formData.entries()) {
-                    console.log(`${pair[0]}: ${pair[1]}`);
-                }
+                // Log JSON data
+                console.log("Sending JSON:", JSON.stringify(userData));
 
+
+
+                // --- form data ---
+                // const formData = new FormData();
+                // formData.append("firstName", firstName);
+                // formData.append("lastName", lastName);
+                // formData.append("username", newUsername);
+                // formData.append("password", newPassword);
+                //
+                // // Print out formData
+                // for (const pair of formData.entries()) {
+                //     console.log(`${pair[0]}: ${pair[1]}`);
+                // }
+
+
+                // Submit data to API as JSON
                 fetch("../../api/addUser.php", {
                     method: "POST",
-                    body: formData
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(userData)
                 })
                 .then(response => response.json())
                 .then(data => {
