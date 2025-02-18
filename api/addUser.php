@@ -3,10 +3,10 @@
 
 	$inData = getRequestInfo();
 
-    $servername = "";
-    $dbUsername = "";
-    $dbPassword = "";
-    $dbName = "contact_manager";
+    $servername = getenv('SERVER_NAME');
+    $dbUsername = getenv('DB_USERNAME');
+    $dbPassword = getenv('DB_PASSWORD');
+    $dbName = getenv('DB_NAME');
 
     $firstName = $inData["FIRST"];
     $lastName = $inData["LAST"];
