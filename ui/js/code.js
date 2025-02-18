@@ -13,8 +13,8 @@ document.addEventListener("DOMContentLoaded", function() {
         loginForm.addEventListener("submit", function (event) {
             event.preventDefault(); // Prevent refreshing
 
-            const username = usernameInput.value.trim();
-            const password = passwordInput.value.trim();
+            const username = usernameInput.value;
+            const password = passwordInput.value;
 
             // Clear previous error messages
             usernameError.style.display = 'none';
@@ -60,14 +60,23 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 // --- Code for validating login with backend ---
                 // Prepare data to be sent
-                const formData = new FormData();
-                formData.append("username", username);
-                formData.append("password", password);
+                const requestData = {
+                    username: username,
+                    password: password
+                };
+
+                // --- form data ---
+                // const formData = new FormData();
+                // formData.append("username", username);
+                // formData.append("password", password);
 
                 // Send data to backend (login.php)
                 fetch("api/login.php", {
                     method: "POST",
-                    body: formData
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(requestData)
                 })
                 .then(response => response.json())
                 .then(data => {
@@ -140,21 +149,38 @@ document.addEventListener("DOMContentLoaded", function() {
 
             // If all fields are correct, submit to API
             if (isValid) {
-                const formData = new FormData();
-                formData.append("firstName", firstName);
-                formData.append("lastName", lastName);
-                formData.append("username", newUsername);
-                formData.append("password", newPassword);
+                const userData = {
+                    firstName: firstName,
+                    lastName: lastName,
+                    username: newUsername,
+                    password: newPassword
+                };
 
-                // Print out formData
-                for (const pair of formData.entries()) {
-                    console.log(`${pair[0]}: ${pair[1]}`);
-                }
+                // Log JSON data
+                console.log("Sending JSON:", JSON.stringify(userData));
 
-                // Submit data to API
+
+
+                // --- form data ---
+                // const formData = new FormData();
+                // formData.append("firstName", firstName);
+                // formData.append("lastName", lastName);
+                // formData.append("username", newUsername);
+                // formData.append("password", newPassword);
+                //
+                // // Print out formData
+                // for (const pair of formData.entries()) {
+                //     console.log(`${pair[0]}: ${pair[1]}`);
+                // }
+
+
+                // Submit data to API as JSON
                 fetch("../../api/addUser.php", {
                     method: "POST",
-                    body: formData
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(userData)
                 })
                 .then(response => response.json())
                 .then(data => {
