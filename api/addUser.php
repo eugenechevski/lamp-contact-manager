@@ -3,10 +3,13 @@
 
 	$inData = getRequestInfo();
 
-    $servername = "";
-    $dbUsername = "";
-    $dbPassword = "";
-    $dbName = "contact_manager";
+    // Load the .env file
+    $env = parse_ini_file('.env');
+
+    $servername = $env["SERVER_NAME"];
+    $dbUsername = $env["DB_USERNAME"];
+    $dbPassword = $env["DB_PASSWORD"];
+    $dbName = $env["DB_NAME"];
 
     $firstName = $inData["FIRST"];
     $lastName = $inData["LAST"];

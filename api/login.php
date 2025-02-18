@@ -2,11 +2,16 @@
 
 	$inData = getRequestInfo();
 
-    $servername = "";
-    $dbUsername = "";
-    $dbPassword = "";
-    $dbName = "contact_manager";
+    // Load the .env file
+    $env = parse_ini_file('.env');
 
+    $servername = $env["SERVER_NAME"];
+    $dbUsername = $env["DB_USERNAME"];
+    $dbPassword = $env["DB_PASSWORD"];
+    $dbName = $env["DB_NAME"];
+
+    echo $servername;
+    
     // server, DB username, DB password, DB name 
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);	
 	if( $conn->connect_error )
