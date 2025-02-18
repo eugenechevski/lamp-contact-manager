@@ -4,7 +4,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const loginForm = document.getElementById("loginForm");
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
-    // const createAccountLink = document.querySelector(".create-account a");
+
     const usernameError = document.getElementById("usernameError");
     const passwordError = document.getElementById("passwordError");
 
@@ -58,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 //     }
                 // }
 
-                // --- Code for validating login with backend
+                // --- Code for validating login with backend ---
                 // Prepare data to be sent
                 const formData = new FormData();
                 formData.append("username", username);
@@ -72,7 +72,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        window.location.href = "dashboard.html"; // --- TODO add dashboard page
+                        window.location.href = "dashboard.html";
                     } else {
                         alert("Login failed: " + data.message);
                     }
@@ -94,25 +94,22 @@ document.addEventListener("DOMContentLoaded", function() {
             const firstName = document.getElementById("firstName").value;
             const lastName = document.getElementById("lastName").value;
             const newUsername = document.getElementById("username").value;
-            // console.log(newUsername);
             const newPassword = document.getElementById("password").value;
             const confirmPassword = document.getElementById("confirmPassword").value;
-            // console.log(newPassword);
-            // console.log(confirmPassword);
+
             const firstNameError = document.getElementById("firstNameError");
             const lastNameError = document.getElementById("lastNameError");
             const newUsernameError = document.getElementById("usernameError");
             const newPasswordError = document.getElementById("passwordError");
 
-
             firstNameError.style.display = 'none';
             lastNameError.style.display = 'none';
             newUsernameError.style.display = 'none';
             newPasswordError.style.display = 'none';
-            // confirmPasswordError.style.display = 'none';
 
             let isValid = true;
 
+            // Check that all fields are filled out
             if (!firstName) {
                 firstNameError.textContent = "Please enter your first name.";
                 firstNameError.style.display = 'block';
@@ -141,6 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 isValid = false;
             }
 
+            // If all fields are correct, submit to API
             if (isValid) {
                 const formData = new FormData();
                 formData.append("firstName", firstName);
@@ -148,10 +146,12 @@ document.addEventListener("DOMContentLoaded", function() {
                 formData.append("username", newUsername);
                 formData.append("password", newPassword);
 
+                // Print out formData
                 for (const pair of formData.entries()) {
                     console.log(`${pair[0]}: ${pair[1]}`);
                 }
 
+                // Submit data to API
                 fetch("../../api/addUser.php", {
                     method: "POST",
                     body: formData
