@@ -92,3 +92,41 @@ input.form-control:focus {
 .create-account {
     text-align: center;
 }
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.search-section {
+    margin-bottom: 2rem;
+}
+
+.add-contact-section {
+    margin-bottom: 2rem;
+    text-align: right;
+}
+
+.contacts-table {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.table th {
+    background-color: #f8f9fa;
+}
+
+.modal-content {
+    border-radius: 8px;
+}
