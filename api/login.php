@@ -2,15 +2,13 @@
 
 	$inData = getRequestInfo();
 
-    // Load the .env file
-    $env = parse_ini_file('.env');
+  // Load the .env file
+  $env = parse_ini_file('.env');
 
-    $servername = $env["SERVER_NAME"];
-    $dbUsername = $env["DB_USERNAME"];
-    $dbPassword = $env["DB_PASSWORD"];
-    $dbName = $env["DB_NAME"];
-
-    echo $servername;
+  $servername = $env["SERVER_NAME"];
+  $dbUsername = $env["DB_USERNAME"];
+  $dbPassword = $env["DB_PASSWORD"];
+  $dbName = $env["DB_NAME"];
     
     // server, DB username, DB password, DB name 
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);	
