@@ -3,30 +3,24 @@
 
 	$inData = getRequestInfo();
 
-  // Load the .env file
-  $env = parse_ini_file('.env');
+    // Load the .env file
+    $env = parse_ini_file('.env');
 
-  $servername = $env["SERVER_NAME"];
-  $dbUsername = $env["DB_USERNAME"];
-  $dbPassword = $env["DB_PASSWORD"];
-  $dbName = $env["DB_NAME"];
+    $servername = $env["SERVER_NAME"];
+    $dbUsername = $env["DB_USERNAME"];
+    $dbPassword = $env["DB_PASSWORD"];
+    $dbName = $env["DB_NAME"];
 
-  $firstName = $inData["FIRST"];
-  $lastName = $inData["LAST"];
+  	$firstName = $inData["FIRST"];
+  	$lastName = $inData["LAST"];
 	$username = $inData["USER"];
-  $password = $inData["PASSWORD"];
-
-  // For testing
-  // $firstName = "";
-  // $lastName = "";
-	// $username = "";
-  // $password = "";
+  	$password = $inData["PASSWORD"];
 
     // server, DB username, DB password, DB name 
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName); 	
 	if( $conn->connect_error )
 	{
-		returnWithError( $conn->connect_error );
+		returnWithError( $conn->connect_error, FALSE );
 	}
 	else
 	{
@@ -35,7 +29,7 @@
 		$stmt->execute();
 		$stmt->close();
 		$conn->close();
-		returnWithError("");
+		returnWithError("", TRUE );
 	}
 	
 	function getRequestInfo()
@@ -49,10 +43,11 @@
 		echo $obj;
 	}
 	
-	function returnWithError( $err )
+	function returnWithError( $err, $success )
 	{
         $retValue = json_encode([
-            "error" => $err
+            "error" => $err,
+			"success" => $success
         ]);
 		sendResultInfoAsJson( $retValue );
 	}

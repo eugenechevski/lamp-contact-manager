@@ -2,13 +2,13 @@
 
 	$inData = getRequestInfo();
 
-  // Load the .env file
-  $env = parse_ini_file('.env');
+    // Load the .env file
+    $env = parse_ini_file('.env');
 
-  $servername = $env["SERVER_NAME"];
-  $dbUsername = $env["DB_USERNAME"];
-  $dbPassword = $env["DB_PASSWORD"];
-  $dbName = $env["DB_NAME"];
+    $servername = $env["SERVER_NAME"];
+    $dbUsername = $env["DB_USERNAME"];
+    $dbPassword = $env["DB_PASSWORD"];
+    $dbName = $env["DB_NAME"];
     
     // server, DB username, DB password, DB name 
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);	
@@ -97,7 +97,7 @@
 		header('Content-type: application/json');
 		echo $obj;
 	}
-	
+
 	function returnWithError( $err )
 	{
         $retValue = json_encode([
@@ -105,7 +105,8 @@
             "first" => "",
             "last" => "",
             "listOfContacts" => [],
-            "error" => $err
+            "error" => $err,
+            "success" => FALSE
         ]);
 		sendResultInfoAsJson( $retValue );
 	}
@@ -117,7 +118,8 @@
             "first" => $firstName,
             "last" => $lastName,
             "listOfContacts" => $listOfContacts, 
-            "error" => ""
+            "error" => "",
+            "success" => TRUE
         ]);
         sendResultInfoAsJson( $retValue );
 	}
