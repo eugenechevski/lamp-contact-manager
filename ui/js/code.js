@@ -143,14 +143,14 @@ document.addEventListener("DOMContentLoaded", function() {
         })
     }
 
-// ------ DASHBOARD FUNCTIONALITY ------
+// -- DASHBOARD FUNCTIONALITY --
 const createContactForm = document.getElementById("createContactForm");
 const contactsList = document.getElementById("contactsList");
 const usernameDisplay = document.getElementById("usernameDisplay");
 
-// Display username in dashboard
+// display username
 if (usernameDisplay) {
-    fetch("api/getUserInfo.php")  // Note: You might need to create this PHP file
+    fetch("api/getUserInfo.php")  
         .then(response => response.json())
         .then(data => {
             if (data.success) {
@@ -162,14 +162,14 @@ if (usernameDisplay) {
         });
 }
 
-// Load contacts
+// loading contacts
 function loadContacts() {
     if (contactsList) {
-        fetch("api/RetrieveContact.php")  // Updated to match your PHP file
+        fetch("api/RetrieveContact.php")  
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    contactsList.innerHTML = ''; // Clear existing contacts
+                    contactsList.innerHTML = ''; // clearing contacts
                     data.contacts.forEach(contact => {
                         const row = document.createElement('tr');
                         row.innerHTML = `
@@ -187,7 +187,7 @@ function loadContacts() {
                         contactsList.appendChild(row);
                     });
 
-                    // Add event listeners to new buttons
+                    // event listeners to new buttons
                     addContactButtonListeners();
                 }
             })
@@ -197,7 +197,7 @@ function loadContacts() {
     }
 }
 
-// Create new contact
+// create new contact
 if (createContactForm) {
     createContactForm.addEventListener("submit", function(event) {
         event.preventDefault();
@@ -209,7 +209,7 @@ if (createContactForm) {
         formData.append("name", name);
         formData.append("email", email);
 
-        fetch("api/CreateContact.php", {  // Updated to match your PHP file
+        fetch("api/CreateContact.php", {  
             method: "POST",
             body: formData
         })
@@ -217,7 +217,7 @@ if (createContactForm) {
         .then(data => {
             if (data.success) {
                 createContactForm.reset();
-                loadContacts(); // Reload the contacts list
+                loadContacts(); // reloading contacts list
             } else {
                 alert("Failed to create contact: " + data.message);
             }
@@ -229,9 +229,9 @@ if (createContactForm) {
     });
 }
 
-// Add event listeners to edit and delete buttons
+// event listeners to edit and delete buttons
 function addContactButtonListeners() {
-    // Edit contact buttons
+    // edit contacts
     document.querySelectorAll('.edit-contact').forEach(button => {
         button.addEventListener('click', function() {
             const contactId = this.getAttribute('data-id');
@@ -239,7 +239,7 @@ function addContactButtonListeners() {
             const name = row.cells[0].textContent;
             const email = row.cells[1].textContent;
 
-            // Create inline edit form
+            // inline edit form
             row.innerHTML = `
                 <td>
                     <input type="text" class="form-control" value="${name}" id="edit-name-${contactId}">
@@ -253,7 +253,7 @@ function addContactButtonListeners() {
                 </td>
             `;
 
-            // Add save and cancel handlers
+            // add save and cancel handlers
             row.querySelector('.save-edit').addEventListener('click', function() {
                 const updatedName = document.getElementById(`edit-name-${contactId}`).value;
                 const updatedEmail = document.getElementById(`edit-email-${contactId}`).value;
@@ -263,14 +263,14 @@ function addContactButtonListeners() {
                 formData.append("name", updatedName);
                 formData.append("email", updatedEmail);
 
-                fetch("api/UpdateContact.php", {  // Updated to match your PHP file
+                fetch("api/UpdateContact.php", {  
                     method: "POST",
                     body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        loadContacts(); // Reload the contacts list
+                        loadContacts(); // reloading contacts list
                     } else {
                         alert("Failed to update contact: " + data.message);
                     }
@@ -282,12 +282,12 @@ function addContactButtonListeners() {
             });
 
             row.querySelector('.cancel-edit').addEventListener('click', function() {
-                loadContacts(); // Reload the contacts list to cancel edit
+                loadContacts(); // reload contacts list to cancel edit
             });
         });
     });
 
-    // Delete contact buttons
+    // delete contact buttons
     document.querySelectorAll('.delete-contact').forEach(button => {
         button.addEventListener('click', function() {
             if (confirm("Are you sure you want to delete this contact?")) {
@@ -296,14 +296,14 @@ function addContactButtonListeners() {
                 const formData = new FormData();
                 formData.append("id", contactId);
 
-                fetch("api/DeleteContact.php", {  // Updated to match your PHP file
+                fetch("api/DeleteContact.php", {  //delete contact file
                     method: "POST",
                     body: formData
                 })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        loadContacts(); // Reload the contacts list
+                        loadContacts(); // reloading contacts list
                     } else {
                         alert("Failed to delete contact: " + data.message);
                     }
@@ -317,7 +317,7 @@ function addContactButtonListeners() {
     });
 }
 
-// Load contacts when dashboard page loads
+// load contacts when dashboard page loads
 if (contactsList) {
     loadContacts();
 }
