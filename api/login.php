@@ -2,13 +2,13 @@
 
 	$inData = getRequestInfo();
 
-  // Load the .env file
-  $env = parse_ini_file('.env');
+    // Load the .env file
+    $env = parse_ini_file('.env');
 
-  $servername = $env["SERVER_NAME"];
-  $dbUsername = $env["DB_USERNAME"];
-  $dbPassword = $env["DB_PASSWORD"];
-  $dbName = $env["DB_NAME"];
+    $servername = $env["SERVER_NAME"];
+    $dbUsername = $env["DB_USERNAME"];
+    $dbPassword = $env["DB_PASSWORD"];
+    $dbName = $env["DB_NAME"];
     
     // server, DB username, DB password, DB name 
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);	
@@ -97,15 +97,6 @@
 		header('Content-type: application/json');
 		echo $obj;
 	}
-	
-                // // Mock the server response
-            // function mockLoginRequest(username, password) {
-            //     const mockResponse = username === "admin" && password === "password123"
-            //         ? { success: true, message: "Login successful." }
-            //         : { success: false, message: "Invalid username or password." };
-            //
-            //     handleLoginResponse(mockResponse);
-            // }
 
 	function returnWithError( $err )
 	{
