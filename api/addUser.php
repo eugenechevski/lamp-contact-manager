@@ -26,7 +26,7 @@
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName); 	
 	if( $conn->connect_error )
 	{
-		returnWithError( $conn->connect_error );
+		returnWithError( $conn->connect_error, FALSE );
 	}
 	else
 	{
@@ -35,7 +35,7 @@
 		$stmt->execute();
 		$stmt->close();
 		$conn->close();
-		returnWithError("");
+		returnWithError("", TRUE );
 	}
 	
 	function getRequestInfo()
@@ -49,10 +49,11 @@
 		echo $obj;
 	}
 	
-	function returnWithError( $err )
+	function returnWithError( $err, $success )
 	{
         $retValue = json_encode([
-            "error" => $err
+            "error" => $err,
+			"success" => $success
         ]);
 		sendResultInfoAsJson( $retValue );
 	}

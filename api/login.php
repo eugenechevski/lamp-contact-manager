@@ -100,6 +100,15 @@
 		echo $obj;
 	}
 	
+                // // Mock the server response
+            // function mockLoginRequest(username, password) {
+            //     const mockResponse = username === "admin" && password === "password123"
+            //         ? { success: true, message: "Login successful." }
+            //         : { success: false, message: "Invalid username or password." };
+            //
+            //     handleLoginResponse(mockResponse);
+            // }
+
 	function returnWithError( $err )
 	{
         $retValue = json_encode([
@@ -107,7 +116,8 @@
             "first" => "",
             "last" => "",
             "listOfContacts" => [],
-            "error" => $err
+            "error" => $err,
+            "success" => FALSE
         ]);
 		sendResultInfoAsJson( $retValue );
 	}
@@ -119,7 +129,8 @@
             "first" => $firstName,
             "last" => $lastName,
             "listOfContacts" => $listOfContacts, 
-            "error" => ""
+            "error" => "",
+            "success" => TRUE
         ]);
         sendResultInfoAsJson( $retValue );
 	}
