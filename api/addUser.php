@@ -11,6 +11,11 @@
   $dbPassword = $env["DB_PASSWORD"];
   $dbName = $env["DB_NAME"];
 
+  //$servername = "localhost";
+  //$dbUsername = "root";
+  //$dbPassword = "";
+  //$dbName = "contact_manager";
+
   $firstName = $inData["FIRST"];
   $lastName = $inData["LAST"];
 	$username = $inData["USER"];
@@ -35,7 +40,9 @@
 		$stmt->execute();
 		$stmt->close();
 		$conn->close();
-		returnWithError("");
+		$response["success"] = true;
+		echo json_encode($response);
+		//returnWithError("");
 	}
 	
 	function getRequestInfo()
