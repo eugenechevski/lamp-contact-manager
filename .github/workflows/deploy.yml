@@ -1,0 +1,41 @@
+# Deploy the application to the production environment
+# Lightsail instance
+
+name: Deploy to AWS Lightsail
+
+on:
+  push:
+    branches:
+      - main  # or your production branch name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.LIGHTSAIL_PRIVATE_KEY }}" > ~/.ssh/lightsail.pem
+          chmod 600 ~/.ssh/lightsail.pem
+          
+      - name: Add host key to known_hosts
+        run: |
+          ssh-keyscan -H ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+          
+      - name: Deploy to Lightsail
+        run: |
+          # Deploy files to server
+          scp -i ~/.ssh/lightsail.pem -r \
+            api \
+            db \
+            ui \
+            index.html \
+            ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/opt/bitnami/apache2/htdocs
+
+      - name: Cleanup
+        run: rm -rf ~/.ssh/lightsail.pem
+
