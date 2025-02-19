@@ -38,8 +38,8 @@ document.addEventListener("DOMContentLoaded", function() {
             if (isValid) {
                 // Prepare data to be sent
                 const requestData = {
-                    username: username,
-                    password: password
+                    USER: username,
+                    PASSWORD: password
                 };
 
                 // Send data to backend (login.php)
@@ -122,10 +122,10 @@ document.addEventListener("DOMContentLoaded", function() {
             // If all fields are correct, submit to API
             if (isValid) {
                 const userData = {
-                    firstName: firstName,
-                    lastName: lastName,
-                    username: newUsername,
-                    password: newPassword
+                    FIRST: firstName,
+                    LAST: lastName,
+                    USER: newUsername,
+                    PASSWORD: newPassword
                 };
 
                 // Log JSON data
