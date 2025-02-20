@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((response) => response.json())
           .then((data) => {
             if (data.success) {
-              window.location.href = "../pages/dashboard.html";
+              window.location.href = "ui/pages/dashboard.html";
             } else {
               alert("Login failed: " + data.message);
             }
