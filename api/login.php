@@ -97,7 +97,7 @@
 		header('Content-type: application/json');
 		echo $obj;
 	}
-	
+
 	function returnWithError( $err )
 	{
         $retValue = json_encode([
@@ -105,7 +105,8 @@
             "first" => "",
             "last" => "",
             "listOfContacts" => [],
-            "error" => $err
+            "error" => $err,
+            "success" => FALSE
         ]);
 		sendResultInfoAsJson( $retValue );
 	}
@@ -117,7 +118,8 @@
             "first" => $firstName,
             "last" => $lastName,
             "listOfContacts" => $listOfContacts, 
-            "error" => ""
+            "error" => "",
+            "success" => TRUE
         ]);
         sendResultInfoAsJson( $retValue );
 	}

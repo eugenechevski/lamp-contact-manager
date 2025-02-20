@@ -13,20 +13,14 @@
 
   $firstName = $inData["FIRST"];
   $lastName = $inData["LAST"];
-	$username = $inData["USER"];
+  $username = $inData["USER"];
   $password = $inData["PASSWORD"];
-
-  // For testing
-  // $firstName = "";
-  // $lastName = "";
-	// $username = "";
-  // $password = "";
 
     // server, DB username, DB password, DB name 
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName); 	
 	if( $conn->connect_error )
 	{
-		returnWithError( $conn->connect_error );
+		returnWithError( $conn->connect_error, FALSE );
 	}
 	else
 	{
@@ -35,7 +29,8 @@
 		$stmt->execute();
 		$stmt->close();
 		$conn->close();
-		returnWithError("");
+
+		returnWithError("", TRUE );
 	}
 	
 	function getRequestInfo()
@@ -49,10 +44,11 @@
 		echo $obj;
 	}
 	
-	function returnWithError( $err )
+	function returnWithError( $err, $success )
 	{
         $retValue = json_encode([
-            "error" => $err
+            "error" => $err,
+			      "success" => $success
         ]);
 		sendResultInfoAsJson( $retValue );
 	}
