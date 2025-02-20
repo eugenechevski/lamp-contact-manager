@@ -1,56 +1,66 @@
-
 <?php
 
-	$inData = getRequestInfo();
+$inData = getRequestInfo();
 
-  // Load the .env file
-  $env = parse_ini_file('.env');
+// Load the .env file
+$env = parse_ini_file('./../.env');
+if ($env === false) {
+	returnWithError("Failed to load .env file", FALSE);
+	exit();
+}
 
-  $servername = $env["SERVER_NAME"];
-  $dbUsername = $env["DB_USERNAME"];
-  $dbPassword = $env["DB_PASSWORD"];
-  $dbName = $env["DB_NAME"];
+$servername = $env["SERVER_NAME"] ?? null;
+$dbUsername = $env["DB_USERNAME"] ?? null;
+$dbPassword = $env["DB_PASSWORD"] ?? null;
+$dbName = $env["DB_NAME"] ?? null;
 
-  $firstName = $inData["FIRST"];
-  $lastName = $inData["LAST"];
-  $username = $inData["USER"];
-  $password = $inData["PASSWORD"];
+if (!$servername || !$dbUsername || !$dbPassword || !$dbName) {
+	returnWithError("Missing database configuration", FALSE);
+	exit();
+}
 
-    // server, DB username, DB password, DB name 
-	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName); 	
-	if( $conn->connect_error )
-	{
-		returnWithError( $conn->connect_error, FALSE );
-	}
-	else
-	{
-        $stmt = $conn->prepare("INSERT into USERS (FIRST,LAST,USER,PASSWORD) VALUES (?,?,?,?)");
-		$stmt->bind_param("ssss", $firstName, $lastName, $username, $password);
-		$stmt->execute();
-		$stmt->close();
-		$conn->close();
+$firstName = $inData["FIRST"];
+$lastName = $inData["LAST"];
+$username = $inData["USER"];
+$password = $inData["PASSWORD"];
 
-		returnWithError("", TRUE );
-	}
-	
-	function getRequestInfo()
-	{
-		return json_decode(file_get_contents('php://input'), true);
-	}
+$conn = mysqli_init();
+if (!$conn) {
+	returnWithError("mysqli_init failed", FALSE);
+	exit();
+}
 
-	function sendResultInfoAsJson( $obj )
-	{
-		header('Content-type: application/json');
-		echo $obj;
-	}
-	
-	function returnWithError( $err, $success )
-	{
-        $retValue = json_encode([
-            "error" => $err,
-			      "success" => $success
-        ]);
-		sendResultInfoAsJson( $retValue );
-	}
-	
+if (!$conn->real_connect($servername, $dbUsername, $dbPassword, $dbName)) {
+	returnWithError("Connection failed: " . $conn->connect_error . " (" . $conn->connect_errno . ")", FALSE);
+	exit();
+}
+
+$stmt = $conn->prepare("INSERT into USERS (FIRST,LAST,USER,PASSWORD) VALUES (?,?,?,?)");
+$stmt->bind_param("ssss", $firstName, $lastName, $username, $password);
+$stmt->execute();
+$stmt->close();
+$conn->close();
+
+returnWithError("", TRUE);
+
+function getRequestInfo()
+{
+	return json_decode(file_get_contents('php://input'), true);
+}
+
+function sendResultInfoAsJson($obj)
+{
+	header('Content-type: application/json');
+	echo $obj;
+}
+
+function returnWithError($err, $success)
+{
+	$retValue = json_encode([
+		"error" => $err,
+		"success" => $success
+	]);
+	sendResultInfoAsJson($retValue);
+}
+
 ?>

@@ -1,64 +1,82 @@
 <?php
-    //Input data
-	$inData = getRequestInfo();
-	
-    //Variable data from input
-    $contactID = $inData["CONTACT_ID"];
+//Input data
+$inData = getRequestInfo();
 
-        /*
-        Database Table Content Assumptions
+// Load the .env file
+$env = parse_ini_file('./../.env');
+if ($env === false) {
+	returnWithError("Failed to load .env file");
+	exit();
+}
 
-        User: {
-            ID: int
-            FIRST: str
-            LAST: str
-            USER: str
-            PASSWORD: str
-        }
+$servername = $env["SERVER_NAME"] ?? null;
+$dbUsername = $env["DB_USERNAME"] ?? null;
+$dbPassword = $env["DB_PASSWORD"] ?? null;
+$dbName = $env["DB_NAME"] ?? null;
 
-        Contact: {
-            ID: int -> selected by the user
-            FIRST: str
-            LAST: str
-            EMAIL: str
-            PHONE_NUMBER: str
-            USER_ID: int
-        }
-        */
+if (!$servername || !$dbUsername || !$dbPassword || !$dbName) {
+	returnWithError("Missing database configuration");
+	exit();
+}
 
-    //Default credentials
-	$conn = new mysqli("localhost", "root", "", "contact_manager");
-	if ($conn->connect_error) 
-	{
-		returnWithError( $conn->connect_error );
-	} 
-	else
-	{
-        $stmt = $conn->prepare("DELETE from CONTACTS where ID = ?");
-		$stmt->bind_param("i", $contactID);
+//Variable data from input
+$contactID = $inData["CONTACT_ID"];
 
-		$stmt->execute();
+/*
+Database Table Content Assumptions
 
-		$stmt->close();
-		$conn->close();
-		returnWithError("");
-	}
+User: {
+	ID: int
+	FIRST: str
+	LAST: str
+	USER: str
+	PASSWORD: str
+}
 
-	function getRequestInfo()
-	{
-		return json_decode(file_get_contents('php://input'), true);
-	}
+Contact: {
+	ID: int -> selected by the user
+	FIRST: str
+	LAST: str
+	EMAIL: str
+	PHONE_NUMBER: str
+	USER_ID: int
+}
+*/
 
-	function sendResultInfoAsJson( $obj )
-	{
-		header('Content-type: application/json');
-		echo $obj;
-	}
+$conn = mysqli_init();
+if (!$conn) {
+	returnWithError("mysqli_init failed");
+	exit();
+}
 
-	function returnWithError( $err )
-	{
-		$retValue = '{"error":"' . $err . '"}';
-		sendResultInfoAsJson( $retValue );
-	}
-	
+if (!$conn->real_connect($servername, $dbUsername, $dbPassword, $dbName)) {
+	returnWithError("Connection failed: " . $conn->connect_error . " (" . $conn->connect_errno . ")");
+	exit();
+}
+
+$stmt = $conn->prepare("DELETE from CONTACTS where ID = ?");
+$stmt->bind_param("i", $contactID);
+
+$stmt->execute();
+$stmt->close();
+$conn->close();
+returnWithError("");
+
+function getRequestInfo()
+{
+	return json_decode(file_get_contents('php://input'), true);
+}
+
+function sendResultInfoAsJson($obj)
+{
+	header('Content-type: application/json');
+	echo $obj;
+}
+
+function returnWithError($err)
+{
+	$retValue = '{"error":"' . $err . '"}';
+	sendResultInfoAsJson($retValue);
+}
+
 ?>
