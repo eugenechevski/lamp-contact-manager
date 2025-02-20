@@ -2,6 +2,14 @@
     //Input data
 	$inData = getRequestInfo();
 	
+	// Load the .env file
+    $env = parse_ini_file('.env');
+
+    $servername = $env["SERVER_NAME"];
+    $dbUsername = $env["DB_USERNAME"];
+    $dbPassword = $env["DB_PASSWORD"];
+    $dbName = $env["DB_NAME"];
+
     //Variable data from input
     $contactID = $inData["CONTACT_ID"];
 
@@ -27,7 +35,7 @@
         */
 
     //Default credentials
-	$conn = new mysqli("localhost", "root", "", "contact_manager");
+	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
 	if ($conn->connect_error) 
 	{
 		returnWithError( $conn->connect_error );
@@ -37,11 +45,19 @@
         $stmt = $conn->prepare("DELETE from CONTACTS where ID = ?");
 		$stmt->bind_param("i", $contactID);
 
-		$stmt->execute();
+		if($stmt->execute())
+		{
+			$response["success"] = true;
+		}
+		else
+		{
+			$response["success"] = false;
+		}
 
 		$stmt->close();
 		$conn->close();
-		returnWithError("");
+		echo json_encode($response);
+		//returnWithError("");
 	}
 
 	function getRequestInfo()

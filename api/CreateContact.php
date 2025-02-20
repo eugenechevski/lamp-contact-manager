@@ -49,8 +49,6 @@
         createContact($firstName, $lastName, $email, $phone, $userID);
 
 		$conn->close();
-        $response["success"] = true;
-		echo json_encode($response);
 		//returnWithError("");
 	}
 
@@ -111,6 +109,17 @@
         $stmt->bind_param($types, ...$params);
 
         $stmt->execute();
+        if ($stmt->execute())
+        {
+            $response["success"] = true;
+		    echo json_encode($response);
+        }
+        else
+        {
+            $response["success"] = false;
+            echo json_encode($response);
+            returnWithError("Failed to add contact.")
+        }
         $stmt->close();
 
     }
