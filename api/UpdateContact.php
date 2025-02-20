@@ -2,6 +2,14 @@
 
     //Input data
 	$inData = getRequestInfo();
+
+    // Load the .env file
+    $env = parse_ini_file('.env');
+
+    $servername = $env["SERVER_NAME"];
+    $dbUsername = $env["DB_USERNAME"];
+    $dbPassword = $env["DB_PASSWORD"];
+    $dbName = $env["DB_NAME"];
 	
     //Variable data from input
     $contactID = $inData["CONTACT_ID"];
@@ -39,7 +47,7 @@
         */
 
     //Default credentials
-	$conn = new mysqli("localhost", "root", "", "contact_manager");
+	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
 	if ($conn->connect_error) 
 	{
 		returnWithError( $conn->connect_error );
@@ -48,9 +56,8 @@
 	{
         updateContact($contactID, $firstName, $lastName, $email, $phone);
 
-		$stmt->close();
 		$conn->close();
-		returnWithError("");
+		//returnWithError("");
 	}
 
     function updateContact($contactID, $firstName, $lastName, $email, $phone)
@@ -82,7 +89,8 @@
         $params[] = $contactID;
         $types .= "i";
 
-        if (empty($updates)) {
+        if (empty($updates)) 
+        {
             returnWithError("No fields provided.");
             return;
         }
@@ -93,7 +101,19 @@
         $stmt = $conn->prepare($request);
         $stmt->bind_param($types, ...$params);
 
-        $stmt->execute();
+        if ($stmt->execute())
+        {
+            $response["success"] = true;
+		    echo json_encode($response);
+        }
+        else
+        {
+            $response["success"] = false;
+            echo json_encode($response);
+            returnWithError("Failed to update contact.");
+        }
+
+        $stmt->close();
 
     }
 

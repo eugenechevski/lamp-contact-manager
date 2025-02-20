@@ -1,14 +1,22 @@
 <?php
 	
+    // Load the .env file
+    $env = parse_ini_file('.env');
+
+    $servername = $env["SERVER_NAME"];
+    $dbUsername = $env["DB_USERNAME"];
+    $dbPassword = $env["DB_PASSWORD"];
+    $dbName = $env["DB_NAME"];
+
     //Check for id
-    if (!isset($_GET["contactID"]))
+    if (!isset($_GET["CONTACT_ID"]))
     {
         returnwithError("Missing contactID");
     }
 
 
     //get contact id
-    $contactID = intval($_GET["contactID"]);
+    $contactID = intval($_GET["CONTACT_ID"]);
 
         /*
         Database Table Content Assumptions
@@ -32,7 +40,7 @@
         */
 
     //Default credentials
-	$conn = new mysqli("localhost", "root", "", "contact_manager");
+	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
 	if ($conn->connect_error) 
 	{
 		returnWithError( $conn->connect_error );
@@ -55,18 +63,20 @@
                 $lastName = $contact["LAST"];
                 $email = $contact["EMAIL"];
                 $phone = $contact["PHONE_NUMBER"];
+                $response["success"] = true;
 
-                returnWithInfo($contactID, $firstName, $lastName, $email, $phone);
+                returnWithInfo($contactID, $firstName, $lastName, $email, $phone , $response);
             }
             else
             {
+                $response["success"] = false;
                 returnWithError("Contact not found.");
             }
         }
 
 		$stmt->close();
 		$conn->close();
-		returnWithError("");
+		//returnWithError("");
 	}
 	
 	function returnWithError( $err )
@@ -81,17 +91,23 @@
 		echo $obj;
 	}
 
-    function returnWithInfo( $id, $firstName, $lastName, $email, $phone)
+    function returnWithInfo( $id, $firstName, $lastName, $email, $phone, $response)
 	{
 		$retValue = json_encode([
-            "id" => $id,
-            "first" => $firstName,
-            "last" => $lastName,
-            "email" => $email, 
-            "phone" => $phone,
-            "error" => ""
+            "response" => 
+            [
+                "success" => true,
+                "id" => $id,
+                "first" => $firstName,
+                "last" => $lastName,
+                "email" => $email,
+                "phone" => $phone,
+                "error" => ""
+            ]
         ]);
+
         sendResultInfoAsJson( $retValue );
+
 	}
 	
 ?>
