@@ -1,70 +1,67 @@
 <?php
-    //Input data
-	$inData = getRequestInfo();
-	
-    //Variable data from input
-    //Assumed Names
-    $userID = $inData["USER_ID"];
-    $firstName = $inData["FIRST"];
-    $lastName = $inData["LAST"];
-    $email = $inData["EMAIL"];
-    $phone = $inData["PHONE_NUMBER"];
+//Input data
+$inData = getRequestInfo();
 
-        /*
-        Database Table Content Assumptions
+//Variable data from input
+//Assumed Names
+$userID = $inData["USER_ID"];
+$firstName = $inData["FIRST"];
+$lastName = $inData["LAST"];
+$email = $inData["EMAIL"];
+$phone = $inData["PHONE_NUMBER"];
 
-        User: {
-            ID: int
-            FIRST: str
-            LAST: str
-            USER: str
-            PASSWORD: str
-        }
+/*
+Database Table Content Assumptions
 
-        Contact: {
-            ID: int
-            FIRST: str
-            LAST: str
-            EMAIL: str
-            PHONE_NUMBER: str
-            USER_ID: int
-        }
-        */
+User: {
+    ID: int
+    FIRST: str
+    LAST: str
+    USER: str
+    PASSWORD: str
+}
 
-    //Default credentials
-	$conn = new mysqli("localhost", "root", "", "contact_manager");
-	if ($conn->connect_error) 
-	{
-		returnWithError( $conn->connect_error );
-	} 
-	else
-	{
-        //Add the contact
-        $stmt = $conn->prepare("INSERT into CONTACTS (FIRST, LAST, EMAIL, PHONE_NUMBER, USER_ID) VALUES(?,?,?,?,?)");
-        $stmt->bind_param("ssssi", $firstName, $lastName, $email, $phone, $userID);
+Contact: {
+    ID: int
+    FIRST: str
+    LAST: str
+    EMAIL: str
+    PHONE_NUMBER: str
+    USER_ID: int
+}
+*/
 
-        $stmt->execute();
+//Default credentials
+$conn = new mysqli("localhost", "root", "", "contact_manager");
+if ($conn->connect_error) {
+    returnWithError($conn->connect_error);
+} else {
+    //Add the contact
+    $stmt = $conn->prepare("INSERT into CONTACTS (FIRST, LAST, EMAIL, PHONE_NUMBER, USER_ID) VALUES(?,?,?,?,?)");
+    $stmt->bind_param("ssssi", $firstName, $lastName, $email, $phone, $userID);
 
-		$stmt->close();
-		$conn->close();
-		returnWithError("");
-	}
+    $stmt->execute();
 
-	function getRequestInfo()
-	{
-		return json_decode(file_get_contents('php://input'), true);
-	}
+    $stmt->close();
+    $conn->close();
+    returnWithError("");
+}
 
-	function sendResultInfoAsJson( $obj )
-	{
-		header('Content-type: application/json');
-		echo $obj;
-	}
-	
-	function returnWithError( $err )
-	{
-		$retValue = '{"error":"' . $err . '"}';
-		sendResultInfoAsJson( $retValue );
-	}
-	
+function getRequestInfo()
+{
+    return json_decode(file_get_contents('php://input'), true);
+}
+
+function sendResultInfoAsJson($obj)
+{
+    header('Content-type: application/json');
+    echo $obj;
+}
+
+function returnWithError($err)
+{
+    $retValue = '{"error":"' . $err . '"}';
+    sendResultInfoAsJson($retValue);
+}
+
 ?>
