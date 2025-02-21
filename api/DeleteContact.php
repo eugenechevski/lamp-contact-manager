@@ -1,40 +1,28 @@
 <?php
-    //Input data
-	$inData = getRequestInfo();
-	
-	// Load the .env file
-    $env = parse_ini_file('./../.env');
 
-    $servername = $env["SERVER_NAME"];
-    $dbUsername = $env["DB_USERNAME"];
-    $dbPassword = $env["DB_PASSWORD"];
-    $dbName = $env["DB_NAME"];
+//Input data
+$inData = getRequestInfo();
 
-    //Variable data from input
-    $contactID = $inData["CONTACT_ID"];
+//Variable data from input
+$contactID = $inData["CONTACT_ID"];
 
-        /*
-        Database Table Content Assumptions
+// Load the .env file
+$env = parse_ini_file('./../.env');
+if ($env === false) {
+	returnWithError("Failed to load .env file");
+	exit();
+}
 
-        User: {
-            ID: int
-            FIRST: str
-            LAST: str
-            USER: str
-            PASSWORD: str
-        }
+$servername = $env["SERVER_NAME"] ?? null;
+$dbUsername = $env["DB_USERNAME"] ?? null;
+$dbPassword = $env["DB_PASSWORD"] ?? null;
+$dbName = $env["DB_NAME"] ?? null;
 
-        Contact: {
-            ID: int -> selected by the user
-            FIRST: str
-            LAST: str
-            EMAIL: str
-            PHONE_NUMBER: str
-            USER_ID: int
-        }
-        */
+if (!$servername || !$dbUsername || !$dbPassword || !$dbName) {
+	returnWithError("Missing database configuration");
+	exit();
+}
 
-    //Default credentials
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
 	if ($conn->connect_error) 
 	{
@@ -76,5 +64,5 @@
 		$retValue = '{"error":"' . $err . '"}';
 		sendResultInfoAsJson( $retValue );
 	}
-	
+
 ?>

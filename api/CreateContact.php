@@ -17,27 +17,6 @@
     $email = $inData["EMAIL"];
     $phone = $inData["PHONE_NUMBER"];
 
-        /*
-        Database Table Content Assumptions
-
-        User: {
-            ID: int
-            FIRST: str
-            LAST: str
-            USER: str
-            PASSWORD: str
-        }
-
-        Contact: {
-            ID: int
-            FIRST: str
-            LAST: str
-            EMAIL: str
-            PHONE_NUMBER: str
-            USER_ID: int
-        }
-        */
-
     //Default credentials
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
 	if ($conn->connect_error) 
@@ -129,16 +108,17 @@
         return json_decode(file_get_contents('php://input'), true);
     }
 
-	function sendResultInfoAsJson( $obj )
-	{
-		header('Content-type: application/json');
-		echo $obj;
-	}
-	
-	function returnWithError( $err )
-	{
-		$retValue = '{"error":"' . $err . '"}';
-		sendResultInfoAsJson( $retValue );
-	}
-	
+
+function sendResultInfoAsJson($obj)
+{
+    header('Content-type: application/json');
+    echo $obj;
+}
+
+function returnWithError($err)
+{
+    $retValue = '{"error":"' . $err . '"}';
+    sendResultInfoAsJson($retValue);
+}
+
 ?>
