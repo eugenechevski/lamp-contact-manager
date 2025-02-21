@@ -1,7 +1,7 @@
 <?php
 	
     // Load the .env file
-    $env = parse_ini_file('.env');
+    $env = parse_ini_file('./../.env');
 
     $servername = $env["SERVER_NAME"];
     $dbUsername = $env["DB_USERNAME"];
