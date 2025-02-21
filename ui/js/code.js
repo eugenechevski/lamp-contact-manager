@@ -321,4 +321,26 @@ function addContactButtonListeners() {
 if (contactsList) {
     loadContacts();
 }
+ // ------ DARK MODE -----------
+       const darkModeToggle = document.getElementById("darkModeToggle");
+    
+       // check for preference 
+       if (localStorage.getItem("darkMode") === "enabled") {
+           document.body.classList.add("dark-mode");
+       }
+   
+       // toggel dark mode 
+       if (darkModeToggle) {
+           darkModeToggle.addEventListener("click", function() {
+               document.body.classList.toggle("dark-mode");
+   
+               // save preference 
+               if (document.body.classList.contains("dark-mode")) {
+                   localStorage.setItem("darkMode", "enabled");
+               } else {
+                   localStorage.setItem("darkMode", "disabled");
+               }
+           });
+       }
+
 });
