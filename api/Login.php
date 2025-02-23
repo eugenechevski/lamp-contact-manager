@@ -14,8 +14,7 @@ $dbUsername = $env["DB_USERNAME"] ?? null;
 $dbPassword = $env["DB_PASSWORD"] ?? null;
 $dbName = $env["DB_NAME"] ?? null;
 
-// if (!$servername || !$dbUsername || !$dbPassword || !$dbName) {
-if (!$servername || !$dbUsername || !$dbName) {
+if (!$servername || !$dbUsername || !$dbPassword || !$dbName) {
     returnWithError("Missing database configuration");
     exit();
 }
@@ -66,9 +65,6 @@ if ($row = $result->fetch_assoc()) {
     session_start();
     $_SESSION["USER"] = $inData["USER"];
     $_SESSION["PASSWORD"] = $inData["PASSWORD"];
-
-    echo $_SESSION["USER"];
-    echo $_SESSION["PASSWORD"];
 
     $userID = $row["ID"];
     $firstName = $row["FIRST"];

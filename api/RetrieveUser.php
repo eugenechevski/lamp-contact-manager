@@ -12,8 +12,7 @@ $dbUsername = $env["DB_USERNAME"] ?? null;
 $dbPassword = $env["DB_PASSWORD"] ?? null;
 $dbName = $env["DB_NAME"] ?? null;
 
-// if (!$servername || !$dbUsername || !$dbPassword || !$dbName) {
-if (!$servername || !$dbUsername || !$dbName) {
+if (!$servername || !$dbUsername || !$dbPassword || !$dbName) {
     returnWithError("Missing database configuration");
     exit();
 }
@@ -32,14 +31,18 @@ if (!$conn->real_connect($servername, $dbUsername, $dbPassword, $dbName)) {
 
 // session_id('myTestSessionId'); // For CLI testing
 session_start();
+$sessionUser = $_SESSION["USER"] ?? null;
+$sessionPassword = $_SESSION["PASSWORD"] ?? null; 
 
-echo $_SESSION["USER"];
-echo $_SESSION["PASSWORD"];
+if (!$sessionUser || !$sessionPassword) {
+    returnWithError("Missing Session Login Variables");
+    exit();
+}
 
 // Retrieve the Users information based on login info
 $stmt = $conn->prepare("SELECT ID,FIRST,LAST FROM USERS WHERE USER=? AND PASSWORD=?"); 
 
-$stmt->bind_param("ss", $_SESSION["USER"], $_SESSION["PASSWORD"]);
+$stmt->bind_param("ss", $sessionUser, $sessionPassword);
 
 $stmt->execute();
 $result = $stmt->get_result();
