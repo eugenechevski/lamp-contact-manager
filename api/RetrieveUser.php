@@ -1,7 +1,5 @@
 <?php
 
-$inData = getRequestInfo();
-
 // Load the .env file
 $env = parse_ini_file('./../.env');
 if ($env === false) {
@@ -32,44 +30,21 @@ if (!$conn->real_connect($servername, $dbUsername, $dbPassword, $dbName)) {
     exit();
 }
 
-/*
-Database Table Content Assumptions
+// session_id('myTestSessionId'); // For CLI testing
+session_start();
 
-User: {
-    ID: int
-    FIRST: str
-    LAST: str
-    USER: str
-    PASSWORD: str
-}
-
-Contact: {
-    ID: int
-    FIRST: str
-    LAST: str
-    EMAIL: str
-    PHONE_NUMBER: str
-    USER_ID: int
-}
-*/
+echo $_SESSION["USER"];
+echo $_SESSION["PASSWORD"];
 
 // Retrieve the Users information based on login info
-$stmt = $conn->prepare("SELECT ID,FIRST,LAST FROM USERS WHERE USER=? AND PASSWORD=?");
+$stmt = $conn->prepare("SELECT ID,FIRST,LAST FROM USERS WHERE USER=? AND PASSWORD=?"); 
 
-$stmt->bind_param("ss", $inData["USER"], $inData["PASSWORD"]);
+$stmt->bind_param("ss", $_SESSION["USER"], $_SESSION["PASSWORD"]);
 
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
-    // session_id('myTestSessionId'); // For CLI testing 
-    session_start();
-    $_SESSION["USER"] = $inData["USER"];
-    $_SESSION["PASSWORD"] = $inData["PASSWORD"];
-
-    echo $_SESSION["USER"];
-    echo $_SESSION["PASSWORD"];
-
     $userID = $row["ID"];
     $firstName = $row["FIRST"];
     $lastName = $row["LAST"];
@@ -101,7 +76,7 @@ $conn->close();
 
 function getRequestInfo()
 {
-    return json_decode(file_get_contents('php://stdin'), true);
+    return json_decode(file_get_contents('php://input'), true);
 }
 
 function sendResultInfoAsJson($obj)
