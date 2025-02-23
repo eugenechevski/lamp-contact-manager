@@ -66,6 +66,10 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
+    session_start();
+    $_SESSION["USER"] = $inData["USER"];
+    $_SESSION["PASSWORD"] = $inData["USER"];
+
     $userID = $row["ID"];
     $firstName = $row["FIRST"];
     $lastName = $row["LAST"];
