@@ -1,56 +1,113 @@
 <?php
-//Input data
-$inData = getRequestInfo();
+    //Input data
+	$inData = getRequestInfo();
 
-//Variable data from input
-//Assumed Names
-$userID = $inData["USER_ID"];
-$firstName = $inData["FIRST"];
-$lastName = $inData["LAST"];
-$email = $inData["EMAIL"];
-$phone = $inData["PHONE_NUMBER"];
+    // Load the .env file
+    $env = parse_ini_file('./../.env');
 
-/*
-Database Table Content Assumptions
+    $servername = $env["SERVER_NAME"];
+    $dbUsername = $env["DB_USERNAME"];
+    $dbPassword = $env["DB_PASSWORD"];
+    $dbName = $env["DB_NAME"];
 
-User: {
-    ID: int
-    FIRST: str
-    LAST: str
-    USER: str
-    PASSWORD: str
-}
+    //Variable data from input
+    $userID = $inData["USER_ID"];
+    $firstName = $inData["FIRST"];
+    $lastName = $inData["LAST"];
+    $email = $inData["EMAIL"];
+    $phone = $inData["PHONE_NUMBER"];
 
-Contact: {
-    ID: int
-    FIRST: str
-    LAST: str
-    EMAIL: str
-    PHONE_NUMBER: str
-    USER_ID: int
-}
-*/
+    //Default credentials
+	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
+	if ($conn->connect_error) 
+	{
+		returnWithError( $conn->connect_error );
+	} 
+	else
+	{
+        createContact($firstName, $lastName, $email, $phone, $userID);
 
-//Default credentials
-$conn = new mysqli("localhost", "root", "", "contact_manager");
-if ($conn->connect_error) {
-    returnWithError($conn->connect_error);
-} else {
-    //Add the contact
-    $stmt = $conn->prepare("INSERT into CONTACTS (FIRST, LAST, EMAIL, PHONE_NUMBER, USER_ID) VALUES(?,?,?,?,?)");
-    $stmt->bind_param("ssssi", $firstName, $lastName, $email, $phone, $userID);
+		$conn->close();
+		//returnWithError("");
+	}
 
-    $stmt->execute();
+    function createContact($firstName, $lastName, $email, $phone, $userID)
+    {
+        global $conn;
+    
+        $updates = [];
+        $params = [];
+        $qmarks = [];
+        $types = "";
 
-    $stmt->close();
-    $conn->close();
-    returnWithError("");
-}
+        //Support optional parameters
+        if ($firstName !== null) 
+            { 
+                $updates[] = "FIRST"; $params[] = $firstName; $qmarks[] = "?"; $types .= "s"; 
+            }
+        else
+        {
+            $response["success"] = false;
+        }
+        if ($lastName !== null) //Needs a separate field in the frontend
+            { 
+            $updates[] = "LAST"; $params[] = $lastName; $qmarks[] = "?"; $types .= "s"; 
+            }
+        else
+        {
+            $response["success"] = false;
+        }
+        if ($email !== null) 
+            { 
+                $updates[] = "EMAIL"; $params[] = $email; $qmarks[] = "?"; $types .= "s"; 
+            }
+        else
+        {
+            $response["success"] = false;
+        }
+        if ($phone !== null) 
+            { 
+                $updates[] = "PHONE_NUMBER"; $params[] = $phone; $qmarks[] = "?"; $types .= "s"; 
+            }
 
-function getRequestInfo()
-{
-    return json_decode(file_get_contents('php://input'), true);
-}
+        $params[] = $userID;
+        $qmarks[] = "?";
+        $updates[] = "USER_ID";
+        $types .= "i";
+
+        if (empty($updates)) {
+            returnWithError("No fields provided.");
+            $response["success"] = false;
+            return;
+        }
+
+        //combine parameters into request
+        $request = "INSERT into CONTACTS (" . implode(", ", $updates) . ") VALUES(" . implode(",", $qmarks) . ")";
+
+        $stmt = $conn->prepare($request);
+        $stmt->bind_param($types, ...$params);
+
+        $stmt->execute();
+        if ($stmt->execute())
+        {
+            $response["success"] = true;
+		    echo json_encode($response);
+        }
+        else
+        {
+            $response["success"] = false;
+            echo json_encode($response);
+            returnWithError("Failed to add contact.")
+        }
+        $stmt->close();
+
+    }
+
+	function getRequestInfo()
+    {
+        return json_decode(file_get_contents('php://input'), true);
+    }
+
 
 function sendResultInfoAsJson($obj)
 {
