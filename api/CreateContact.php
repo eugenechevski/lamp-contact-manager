@@ -5,6 +5,8 @@
     // Load the .env file
     $env = parse_ini_file('./../.env');
 
+    //$env = parse_ini_file('.env');
+
     $servername = $env["SERVER_NAME"];
     $dbUsername = $env["DB_USERNAME"];
     $dbPassword = $env["DB_PASSWORD"];
@@ -97,16 +99,16 @@
         {
             $response["success"] = false;
             echo json_encode($response);
-            returnWithError("Failed to add contact.")
+            returnWithError("Failed to add contact.");
         }
         $stmt->close();
 
     }
 
-	function getRequestInfo()
-    {
-        return json_decode(file_get_contents('php://input'), true);
-    }
+function getRequestInfo()
+{
+    return json_decode(file_get_contents('php://input'), true);
+}
 
 
 function sendResultInfoAsJson($obj)
