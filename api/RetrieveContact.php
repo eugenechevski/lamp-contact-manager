@@ -15,27 +15,6 @@
 
     //var_dump($contactID);
 
-        /*
-        Database Table Content Assumptions
-
-        User: {
-            ID: int
-            FIRST: str
-            LAST: str
-            USER: str
-            PASSWORD: str
-        }
-
-        Contact: {
-            ID: int -> selected by the user
-            FIRST: str
-            LAST: str
-            EMAIL: str
-            PHONE_NUMBER: str
-            USER_ID: int
-        }
-        */
-
     //Default credentials
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
 	if ($conn->connect_error) 
