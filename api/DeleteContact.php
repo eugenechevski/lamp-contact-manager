@@ -8,6 +8,7 @@ $contactID = $inData["CONTACT_ID"];
 
 // Load the .env file
 $env = parse_ini_file('./../.env');
+//$env = parse_ini_file('.env');
 if ($env === false) {
 	returnWithError("Failed to load .env file");
 	exit();
@@ -17,11 +18,6 @@ $servername = $env["SERVER_NAME"] ?? null;
 $dbUsername = $env["DB_USERNAME"] ?? null;
 $dbPassword = $env["DB_PASSWORD"] ?? null;
 $dbName = $env["DB_NAME"] ?? null;
-
-if (!$servername || !$dbUsername || !$dbPassword || !$dbName) {
-	returnWithError("Missing database configuration");
-	exit();
-}
 
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
 	if ($conn->connect_error) 

@@ -2,42 +2,18 @@
 	
     // Load the .env file
     $env = parse_ini_file('./../.env');
+    //$env = parse_ini_file('.env');
 
     $servername = $env["SERVER_NAME"];
     $dbUsername = $env["DB_USERNAME"];
     $dbPassword = $env["DB_PASSWORD"];
     $dbName = $env["DB_NAME"];
 
-    //Check for id
-    if (!isset($_GET["CONTACT_ID"]))
-    {
-        returnwithError("Missing contactID");
-    }
-
 
     //get contact id
-    $contactID = intval($_GET["CONTACT_ID"]);
+    $contactID = intval($_GET["contact_ID"]);
 
-        /*
-        Database Table Content Assumptions
-
-        User: {
-            ID: int
-            FIRST: str
-            LAST: str
-            USER: str
-            PASSWORD: str
-        }
-
-        Contact: {
-            ID: int -> selected by the user
-            FIRST: str
-            LAST: str
-            EMAIL: str
-            PHONE_NUMBER: str
-            USER_ID: int
-        }
-        */
+    //var_dump($contactID);
 
     //Default credentials
 	$conn = new mysqli($servername, $dbUsername, $dbPassword, $dbName);
@@ -65,7 +41,7 @@
                 $phone = $contact["PHONE_NUMBER"];
                 $response["success"] = true;
 
-                returnWithInfo($contactID, $firstName, $lastName, $email, $phone , $response);
+                returnWithInfo($contactID, $firstName, $lastName, $email, $phone, $response);
             }
             else
             {
