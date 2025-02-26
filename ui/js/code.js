@@ -223,37 +223,52 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
   }
 
-  // create new contact
-  if (createContactForm) {
-    createContactForm.addEventListener("submit", function (event) {
-      event.preventDefault();
+  // create new contact function
+if (createContactForm) {
+  createContactForm.addEventListener("submit", async function (event) {
+    event.preventDefault();
 
-      const name = document.getElementById("contactName").value.trim();
-      const email = document.getElementById("contactEmail").value.trim();
+    //input values
+    const name = document.getElementById("contactName").value.trim();
+    const email = document.getElementById("contactEmail").value.trim();
 
-      const formData = new FormData();
-      formData.append("name", name);
-      formData.append("email", email);
+    if (!name || !email) {
+      alert("Please fill in both Name and Email fields.");
+      return;
+    }
 
-      fetch("../../api/CreateContact.php", {
+    // request payload
+    const requestData = {
+      name: name,
+      email: email,
+    };
+
+    try {
+      // api request
+      const response = await fetch("../../api/CreateContact.php", {
         method: "POST",
-        body: formData,
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            createContactForm.reset();
-            loadContacts(); // reloading contacts list
-          } else {
-            alert("Failed to create contact: " + data.message);
-          }
-        })
-        .catch((error) => {
-          console.error("Error creating contact:", error);
-          alert("An error occurred. Please try again.");
-        });
-    });
-  }
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestData),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        createContactForm.reset();
+        loadContacts(); // reload contacts 
+      } else {
+        console.error("Error from API:", data.message);
+        alert("Failed to create contact: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error during contact creation:", error);
+      alert("An unexpected error occurred. Please try again.");
+    }
+  });
+}
+
 
   // event listeners to edit and delete buttons
   function addContactButtonListeners() {
@@ -353,5 +368,30 @@ document.addEventListener("DOMContentLoaded", async function () {
   // load contacts when dashboard page loads
   if (contactsList) {
     loadContacts();
+  }
+});
+
+
+// search contact
+function searchContacts() {
+  const searchInput = document.getElementById("searchContact");
+  const searchText = searchInput.value.trim().toLowerCase();
+  const rows = document.querySelectorAll("#contactsList tr");
+
+  rows.forEach((row) => {
+    const name = row.cells[0].textContent.toLowerCase(); 
+    
+    if (name.includes(searchText)) {
+      row.style.display = ""; // show matching rows
+    } else {
+      row.style.display = "none"; 
+    }
+  });
+}
+document.addEventListener("DOMContentLoaded", function () {
+  const searchInput = document.getElementById("searchContact");
+
+  if (searchInput) {
+    searchInput.addEventListener("input", searchContacts);
   }
 });
