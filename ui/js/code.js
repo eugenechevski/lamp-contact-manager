@@ -1,5 +1,17 @@
 // Make sure the page is loaded before running js
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
+  // Check if we're on the login page
+  const isLoginPage = window.location.pathname === '/' || 
+                      window.location.pathname === '/index.html';
+  
+  // If on login page and already logged in, redirect to dashboard
+  if (isLoginPage) {
+    await redirectIfLoggedIn();
+  } else {
+    // For all other pages, require authentication
+    await requireAuth();
+  }
+
   // ------ LOGIN FORM ------
   const loginForm = document.getElementById("loginForm");
   const usernameInput = document.getElementById("username");
@@ -55,7 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (data.success) {
               window.location.href = "ui/pages/dashboard.html";
             } else {
-              alert("Login failed: " + data.message);
+              alert("Login failed: " + (data.error || "Unknown error"));
             }
           })
           .catch((error) => {
@@ -63,6 +75,14 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("An error occurred. Please try again.");
           });
       }
+    });
+  }
+
+  // ------ LOGOUT FUNCTIONALITY ------
+  const logoutButton = document.getElementById("logoutButton");
+  if (logoutButton) {
+    logoutButton.addEventListener("click", function() {
+      logout(); // This function is defined in auth.js
     });
   }
 
@@ -160,18 +180,12 @@ document.addEventListener("DOMContentLoaded", function () {
   const contactsList = document.getElementById("contactsList");
   const usernameDisplay = document.getElementById("usernameDisplay");
 
-  // display username
+  // display username from session
   if (usernameDisplay) {
-    fetch("../../api/RetrieveUser.php") // TO
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          usernameDisplay.textContent = data.username;
-        }
-      })
-      .catch((error) => {
-        console.error("Error fetching user info:", error);
-      });
+    const currentUser = await getCurrentUser();
+    if (currentUser) {
+      usernameDisplay.textContent = currentUser.firstName + " " + currentUser.lastName;
+    }
   }
 
   // loading contacts
