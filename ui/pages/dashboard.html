@@ -11,13 +11,10 @@
 
 <body>
   <div class="container py-4">
-    <h1 class="mb-4">Welcome to Contact Manager</h1>
-
-    <!-- User Info and Logout Button -->
+    
+    <!-- Logout Button -->
     <div class="dashboard-header">
-      <div>
-        <h3>User: <span id="usernameDisplay">[Username]</span></h3>
-      </div>
+      <h1 id="usernameDisplay" class="mb-4">Welcome to Contact Manager</h1>
       <div id="logoutButton">
         <a href="../../api/Logout.php" class="btn btn-danger">Logout</a>
       </div>
@@ -32,12 +29,22 @@
         <form id="createContactForm" action="../../api/CreateContact.php" method="POST">
           <div class="row">
             <div class="col-md-6 mb-3">
-              <label for="contactName" class="form-label">Name</label>
-              <input type="text" id="contactName" name="contactName" class="form-control" required>
+              <label for="firstName" class="form-label">First Name</label>
+              <input type="text" id="firstName" name="firstName" class="form-control" required>
             </div>
+            <div class="col-md-6 mb-3">
+              <label for="lastName" class="form-label">Last Name</label>
+              <input type="text" id="lastName" name="lastName" class="form-control" required>
+            </div>
+          </div>
+          <div class="row">
             <div class="col-md-6 mb-3">
               <label for="contactEmail" class="form-label">Email</label>
               <input type="email" id="contactEmail" name="contactEmail" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="phoneNumber" class="form-label">Phone Number</label>
+              <input type="tel" id="phoneNumber" name="phoneNumber" class="form-control">
             </div>
           </div>
           <div class="d-grid gap-2 col-md-4 mx-auto">
@@ -59,6 +66,7 @@
               <tr>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Phone Number</th>
                 <th>Actions</th>
               </tr>
             </thead>

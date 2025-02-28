@@ -2,7 +2,7 @@
 session_start();
 
 // Check if user session exists
-if (isset($_SESSION["USER"]) && isset($_SESSION["PASSWORD"])) {
+if (isset($_SESSION["USER"]) && isset($_SESSION["PASSWORD"]) && isset($_SESSION["USER_ID"])) {
     // Load the .env file
     $env = parse_ini_file('./../.env');
     if ($env === false) {
@@ -28,8 +28,8 @@ if (isset($_SESSION["USER"]) && isset($_SESSION["PASSWORD"])) {
     }
 
     // Verify credentials are still valid
-    $stmt = $conn->prepare("SELECT ID FROM USERS WHERE USER=? AND PASSWORD=?");
-    $stmt->bind_param("ss", $_SESSION["USER"], $_SESSION["PASSWORD"]);
+    $stmt = $conn->prepare("SELECT ID FROM USERS WHERE ID=? AND USER=? AND PASSWORD=?");
+    $stmt->bind_param("iss", $_SESSION["USER_ID"], $_SESSION["USER"], $_SESSION["PASSWORD"]);
     $stmt->execute();
     $result = $stmt->get_result();
 

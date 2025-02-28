@@ -65,6 +65,7 @@ if ($row = $result->fetch_assoc()) {
     session_start();
     $_SESSION["USER"] = $inData["USER"];
     $_SESSION["PASSWORD"] = $inData["PASSWORD"];
+    $_SESSION["USER_ID"] = $row["ID"];
 
     $userID = $row["ID"];
     $firstName = $row["FIRST"];

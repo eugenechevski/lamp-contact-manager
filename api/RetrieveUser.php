@@ -1,5 +1,17 @@
 <?php
 
+// Start session
+session_start();
+
+// Check if user is logged in
+if (!isset($_SESSION["USER_ID"])) {
+    returnWithError("User not logged in");
+    exit();
+}
+
+// Get user ID from session
+$userID = $_SESSION["USER_ID"];
+
 // Load the .env file
 $env = parse_ini_file('./../.env');
 if ($env === false) {
@@ -29,26 +41,13 @@ if (!$conn->real_connect($servername, $dbUsername, $dbPassword, $dbName)) {
     exit();
 }
 
-// session_id('myTestSessionId'); // For CLI testing
-session_start();
-$sessionUser = $_SESSION["USER"] ?? null;
-$sessionPassword = $_SESSION["PASSWORD"] ?? null; 
-
-if (!$sessionUser || !$sessionPassword) {
-    returnWithError("Missing Session Login Variables");
-    exit();
-}
-
-// Retrieve the Users information based on login info
-$stmt = $conn->prepare("SELECT ID,FIRST,LAST FROM USERS WHERE USER=? AND PASSWORD=?"); 
-
-$stmt->bind_param("ss", $sessionUser, $sessionPassword);
-
+// Retrieve the Users information based on user ID
+$stmt = $conn->prepare("SELECT ID, FIRST, LAST FROM USERS WHERE ID = ?"); 
+$stmt->bind_param("i", $userID);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($row = $result->fetch_assoc()) {
-    $userID = $row["ID"];
     $firstName = $row["FIRST"];
     $lastName = $row["LAST"];
 

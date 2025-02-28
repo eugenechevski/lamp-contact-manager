@@ -24,7 +24,16 @@ if ($conn->connect_error) {
 	$stmt->bind_param("ssss", $firstName, $lastName, $username, $password);
 	$stmt->execute();
 	$stmt->close();
+	
+	// Get the inserted user ID
+	$userId = $conn->insert_id;
 	$conn->close();
+
+	// Save the user in session
+	session_start();
+	$_SESSION["USER"] = $username;
+	$_SESSION["PASSWORD"] = $password;
+	$_SESSION["USER_ID"] = $userId;
 
 	returnWithError("", TRUE);
 }

@@ -1,19 +1,36 @@
 <?php
-    //Input data
-	$inData = getRequestInfo();
+    // Start the session to get the user ID
+    session_start();
+    
+    // Check if user is logged in
+    if (!isset($_SESSION["USER_ID"])) {
+        $response = array("success" => false, "message" => "User not logged in");
+        echo json_encode($response);
+        exit();
+    }
+    
+    // Input data
+    $inData = getRequestInfo();
 
     // Load the .env file
     $env = parse_ini_file('./../.env');
-
-    //$env = parse_ini_file('.env');
 
     $servername = $env["SERVER_NAME"];
     $dbUsername = $env["DB_USERNAME"];
     $dbPassword = $env["DB_PASSWORD"];
     $dbName = $env["DB_NAME"];
 
-    //Variable data from input
-    $userID = $inData["USER_ID"];
+    // Get current user ID from session
+    $userID = $_SESSION["USER_ID"];
+
+    // Check if we have valid input data
+    if ($inData === null) {
+        $response = array("success" => false, "message" => "Invalid JSON data received");
+        echo json_encode($response);
+        exit();
+    }
+
+    // Variable data from input
     $firstName = $inData["FIRST"];
     $lastName = $inData["LAST"];
     $email = $inData["EMAIL"];
@@ -37,90 +54,44 @@
     {
         global $conn;
     
-        $updates = [];
-        $params = [];
-        $qmarks = [];
-        $types = "";
-
-        //Support optional parameters
-        if ($firstName !== null) 
-            { 
-                $updates[] = "FIRST"; $params[] = $firstName; $qmarks[] = "?"; $types .= "s"; 
-            }
-        else
-        {
-            $response["success"] = false;
-        }
-        if ($lastName !== null) //Needs a separate field in the frontend
-            { 
-            $updates[] = "LAST"; $params[] = $lastName; $qmarks[] = "?"; $types .= "s"; 
-            }
-        else
-        {
-            $response["success"] = false;
-        }
-        if ($email !== null) 
-            { 
-                $updates[] = "EMAIL"; $params[] = $email; $qmarks[] = "?"; $types .= "s"; 
-            }
-        else
-        {
-            $response["success"] = false;
-        }
-        if ($phone !== null) 
-            { 
-                $updates[] = "PHONE_NUMBER"; $params[] = $phone; $qmarks[] = "?"; $types .= "s"; 
-            }
-
-        $params[] = $userID;
-        $qmarks[] = "?";
-        $updates[] = "USER_ID";
-        $types .= "i";
-
-        if (empty($updates)) {
-            returnWithError("No fields provided.");
-            $response["success"] = false;
+        // Validate required fields
+        if (empty($firstName) || empty($lastName) || empty($email)) {
+            $response = array("success" => false, "message" => "First name, last name, and email are required");
+            echo json_encode($response);
             return;
         }
 
-        //combine parameters into request
-        $request = "INSERT into CONTACTS (" . implode(", ", $updates) . ") VALUES(" . implode(",", $qmarks) . ")";
-
-        $stmt = $conn->prepare($request);
-        $stmt->bind_param($types, ...$params);
-
-        $stmt->execute();
-        if ($stmt->execute())
-        {
-            $response["success"] = true;
-		    echo json_encode($response);
-        }
-        else
-        {
-            $response["success"] = false;
+        // Prepare the SQL statement
+        $stmt = $conn->prepare("INSERT INTO CONTACTS (FIRST, LAST, EMAIL, PHONE_NUMBER, USER_ID) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssi", $firstName, $lastName, $email, $phone, $userID);
+        
+        // Execute the statement
+        if ($stmt->execute()) {
+            $response = array("success" => true, "message" => "Contact created successfully");
             echo json_encode($response);
-            returnWithError("Failed to add contact.");
+        } else {
+            $response = array("success" => false, "message" => "Failed to add contact: " . $stmt->error);
+            echo json_encode($response);
         }
+        
         $stmt->close();
-
     }
 
-function getRequestInfo()
-{
-    return json_decode(file_get_contents('php://input'), true);
-}
+    function getRequestInfo()
+    {
+        $data = file_get_contents('php://input');
+        return json_decode($data, true);
+    }
 
+    function sendResultInfoAsJson($obj)
+    {
+        header('Content-type: application/json');
+        echo $obj;
+    }
 
-function sendResultInfoAsJson($obj)
-{
-    header('Content-type: application/json');
-    echo $obj;
-}
-
-function returnWithError($err)
-{
-    $retValue = '{"error":"' . $err . '"}';
-    sendResultInfoAsJson($retValue);
-}
-
+    function returnWithError($err)
+    {
+        $retValue = '{"error":"' . $err . '"}';
+        sendResultInfoAsJson($retValue);
+    }
 ?>
