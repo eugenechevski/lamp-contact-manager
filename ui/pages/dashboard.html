@@ -10,58 +10,71 @@
 </head>
 
 <body>
-  <div class="container">
-    <h1>Welcome to Contact Manager</h1>
+  <div class="container py-4">
+    <h1 class="mb-4">Welcome to Contact Manager</h1>
 
     <!-- User Info and Logout Button -->
-    <div class="row">
-      <div class="col-md-6">
+    <div class="dashboard-header">
+      <div>
         <h3>User: <span id="usernameDisplay">[Username]</span></h3>
       </div>
-      <div id="logoutButton" class="col-md-6 text-end">
+      <div id="logoutButton">
         <a href="../../api/Logout.php" class="btn btn-danger">Logout</a>
       </div>
     </div>
 
     <!-- Create New Contact Form -->
-    <div class="mt-4">
-      <h3>Create New Contact</h3>
-      <form id="createContactForm" action="../../api/CreateContact.php" method="POST">
-        <div class="mb-3">
-          <label for="contactName" class="form-label">Name</label>
-          <input type="text" id="contactName" name="contactName" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label for="contactEmail" class="form-label">Email</label>
-          <input type="email" id="contactEmail" name="contactEmail" class="form-control" required>
-        </div>
-        <div class="d-grid gap-2">
-          <button type="submit" class="btn btn-primary">Create Contact</button>
-        </div>
-      </form>
+    <div class="card mb-4">
+      <div class="card-header bg-primary text-white">
+        <h3 class="h5 mb-0">Create New Contact</h3>
+      </div>
+      <div class="card-body">
+        <form id="createContactForm" action="../../api/CreateContact.php" method="POST">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="contactName" class="form-label">Name</label>
+              <input type="text" id="contactName" name="contactName" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="contactEmail" class="form-label">Email</label>
+              <input type="email" id="contactEmail" name="contactEmail" class="form-control" required>
+            </div>
+          </div>
+          <div class="d-grid gap-2 col-md-4 mx-auto">
+            <button type="submit" class="btn btn-primary">Create Contact</button>
+          </div>
+        </form>
+      </div>
     </div>
 
     <!-- Contacts List -->
-    <div class="mt-5">
-      <h3>Your Contacts</h3>
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody id="contactsList">
-          <!-- Contacts will be dynamically added here -->
-        </tbody>
-      </table>
+    <div class="card">
+      <div class="card-header bg-primary text-white">
+        <h3 class="h5 mb-0">Your Contacts</h3>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="contactsList">
+              <!-- Contacts will be dynamically added here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/auth.js"></script>
-  <script src="../js/code.js"></script>
+  <script src="../js/index.js"></script>
+  <script src="../js/dashboard.js"></script>
 </body>
 
 </html>

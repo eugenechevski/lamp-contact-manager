@@ -32,7 +32,7 @@ function logout() {
 async function requireAuth() {
   const loggedIn = await isUserLoggedIn();
   if (!loggedIn) {
-    window.location.href = '../../index.html';
+    window.location.href = '../../ui/pages/login.html';
   }
 }
 
@@ -40,7 +40,15 @@ async function requireAuth() {
 async function redirectIfLoggedIn() {
   const loggedIn = await isUserLoggedIn();
   if (loggedIn) {
-    window.location.href = 'ui/pages/dashboard.html';
+    // Check if we're on the login page or index page
+    const isLoginPage = window.location.pathname.includes('/ui/pages/login.html');
+    const isIndexPage = window.location.pathname === '/' || window.location.pathname === '/index.html';
+    
+    if (isLoginPage) {
+      window.location.href = './dashboard.html';
+    } else if (isIndexPage) {
+      window.location.href = 'ui/pages/dashboard.html';
+    }
   }
 }
 
