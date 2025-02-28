@@ -229,3 +229,39 @@ body {
     padding: 15px;
   }
 }
+/* Dark Mode vvv */
+.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.dark-mode .hero-section,
+.dark-mode .cta-section,
+.dark-mode .login-form,
+.dark-mode .card {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .table thead th {
+  background-color: #512e89; 
+}
+
+.dark-mode .btn-outline-primary {
+  color: #9370db;
+  border-color: #9370db;
+}
+
+.dark-mode .btn-outline-primary:hover {
+  background-color: #9370db;
+  color: white;
+}
+
+.dark-mode a {
+  color: #a5d6a7;
+}
+
+.dark-mode a:hover {
+  color: #81c784;
+}
