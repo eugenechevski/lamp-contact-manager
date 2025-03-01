@@ -25,68 +25,77 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   // Loading contacts
-  function loadContacts() {
-    if (contactsList) {
-      fetch("../../api/RetrieveContact.php")
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            contactsList.innerHTML = ""; // clearing contacts
-            
-            // Check if there are any contacts
-            if (data.contacts.length === 0) {
-              const emptyRow = document.createElement("tr");
-              emptyRow.innerHTML = `
-                <td colspan="3" class="text-center">No contacts found. Add your first contact above!</td>
-              `;
-              contactsList.appendChild(emptyRow);
-              return;
-            }
-            
-            // Display each contact
-            data.contacts.forEach((contact) => {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                <td>${contact.name}</td>
-                <td>${contact.email}</td>
-                <td>${contact.phone}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm edit-contact" data-id="${contact.id}">
-                        Edit
-                    </button>
-                    <button class="btn btn-danger btn-sm delete-contact" data-id="${contact.id}">
-                        Delete
-                    </button>
-                </td>
-              `;
-              contactsList.appendChild(row);
-            });
+  let contactsData = []; //store contats globally for search_contacts
 
-            // event listeners to new buttons
-            addContactButtonListeners();
-          } else {
-            // Display error message if contacts couldn't be loaded
-            contactsList.innerHTML = `
-              <tr>
-                <td colspan="3" class="text-center text-danger">
-                  Failed to load contacts: ${data.message || "Unknown error"}
-                </td>
-              </tr>
-            `;
+function loadContacts() {
+  if (contactsList) {
+    fetch("../../api/RetrieveContact.php")
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          contactsData = data.contacts; 
+
+          // send to search_contact
+          if (typeof window.setContactsData === "function") {
+            window.setContactsData(contactsData);
           }
-        })
-        .catch((error) => {
-          console.error("Error loading contacts:", error);
+          displayContacts(contactsData);
+        } else {
           contactsList.innerHTML = `
             <tr>
-              <td colspan="3" class="text-center text-danger">
-                An error occurred while loading contacts. Please try again.
+              <td colspan="4" class="text-center text-danger">
+                Failed to load contacts: ${data.message || "Unknown error"}
               </td>
             </tr>
           `;
-        });
-    }
+        }
+      })
+      .catch((error) => {
+        console.error("Error loading contacts:", error);
+        contactsList.innerHTML = `
+          <tr>
+            <td colspan="4" class="text-center text-danger">
+              An error occurred while loading contacts. Please try again.
+            </td>
+          </tr>
+        `;
+      });
   }
+}
+
+// dinamycally display contacts 
+function displayContacts(contacts) {
+  contactsList.innerHTML = ""; 
+
+  if (contacts.length === 0) {
+    contactsList.innerHTML = `
+      <tr>
+        <td colspan="4" class="text-center">No contacts found. Add your first contact above!</td>
+      </tr>
+    `;
+    return;
+  }
+
+  contacts.forEach((contact) => {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>${contact.name}</td>
+      <td>${contact.email}</td>
+      <td>${contact.phone}</td>
+      <td>
+        <button class="btn btn-warning btn-sm edit-contact" data-id="${contact.id}">
+          Edit
+        </button>
+        <button class="btn btn-danger btn-sm delete-contact" data-id="${contact.id}">
+          Delete
+        </button>
+      </td>
+    `;
+    contactsList.appendChild(row);
+  });
+
+  addContactButtonListeners();
+}
 
   // Create new contact
   if (createContactForm) {
@@ -258,3 +267,4 @@ document.addEventListener("DOMContentLoaded", async function () {
     loadContacts();
   }
 }); 
+
