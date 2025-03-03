@@ -291,3 +291,45 @@ body {
 .dark-mode a:hover {
   color: #81c784;
 }
+
+/* Search container */
+.search-container {
+  width: 300px;
+  max-width: 100%;
+}
+
+.search-container .input-group {
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.search-container .form-control:focus {
+  box-shadow: none;
+  border-color: var(--primary-light);
+}
+
+.search-container .btn {
+  border-color: var(--light);
+}
+
+.search-container .btn:hover {
+  background-color: var(--primary-light);
+  color: white;
+}
+
+/* Dark mode styles for search */
+.dark-mode .search-container .btn {
+  background-color: #333;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+.dark-mode .search-container .btn:hover {
+  background-color: var(--primary-light);
+}
+
+.dark-mode .search-container .form-control {
+  background-color: #333;
+  color: #e0e0e0;
+  border-color: #444;
+}

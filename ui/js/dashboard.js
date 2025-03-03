@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   const contactsList = document.getElementById("contactsList");
   const usernameDisplay = document.getElementById("usernameDisplay");
   const logoutButton = document.getElementById("logoutButton");
+  const searchInput = document.getElementById("searchInput");
+  const searchButton = document.getElementById("searchButton");
 
   // Display username from session
   if (usernameDisplay) {
@@ -25,51 +27,157 @@ document.addEventListener("DOMContentLoaded", async function () {
     });
   }
 
-  // Loading contacts
-  function loadContacts() {
+  // Search functionality
+  if (searchButton && searchInput) {
+    // Search when button is clicked
+    searchButton.addEventListener("click", function() {
+      const searchTerm = searchInput.value.trim();
+      if (searchTerm) {
+        searchContacts(searchTerm);
+      } else {
+        loadContacts(); // If search is empty, load all contacts
+      }
+    });
+
+    // Search when Enter key is pressed
+    searchInput.addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const searchTerm = searchInput.value.trim();
+        if (searchTerm) {
+          searchContacts(searchTerm);
+        } else {
+          loadContacts(); // If search is empty, load all contacts
+        }
+      }
+    });
+
+    // Reset search when input is cleared
+    searchInput.addEventListener("input", function() {
+      if (searchInput.value.trim() === "") {
+        loadContacts();
+      }
+    });
+  }
+
+  // Function to search contacts
+  function searchContacts(searchTerm) {
     if (contactsList) {
-      fetch("../../api/RetrieveContact.php")
+      // Show loading indicator
+      contactsList.innerHTML = `
+        <tr>
+          <td colspan="4" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </td>
+        </tr>
+      `;
+
+      // Send search request to API
+      fetch("../../api/SearchContacts.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Requested-With": "XMLHttpRequest"
+        },
+        body: JSON.stringify({ search: searchTerm })
+      })
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
-            contactsList.innerHTML = ""; // clearing contacts
-            
-            // Check if there are any contacts
-            if (data.contacts.length === 0) {
-              const emptyRow = document.createElement("tr");
-              emptyRow.innerHTML = `
-                <td colspan="3" class="text-center">No contacts found. Add your first contact above!</td>
-              `;
-              contactsList.appendChild(emptyRow);
-              return;
-            }
-            
-            // Display each contact
-            data.contacts.forEach((contact) => {
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                <td>${contact.name}</td>
-                <td>${contact.email}</td>
-                <td>${contact.phone}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm edit-contact" data-id="${contact.id}">
-                        Edit
-                    </button>
-                    <button class="btn btn-danger btn-sm delete-contact" data-id="${contact.id}">
-                        Delete
-                    </button>
+            displayContacts(data.contacts);
+          } else {
+            // Display error message
+            contactsList.innerHTML = `
+              <tr>
+                <td colspan="4" class="text-center text-danger">
+                  ${data.message || "Error searching contacts"}
                 </td>
-              `;
-              contactsList.appendChild(row);
-            });
+              </tr>
+            `;
+          }
+        })
+        .catch((error) => {
+          console.error("Error searching contacts:", error);
+          contactsList.innerHTML = `
+            <tr>
+              <td colspan="4" class="text-center text-danger">
+                An error occurred while searching. Please try again.
+              </td>
+            </tr>
+          `;
+        });
+    }
+  }
 
-            // event listeners to new buttons
-            addContactButtonListeners();
+  // Function to display contacts in the table
+  function displayContacts(contacts) {
+    if (contactsList) {
+      contactsList.innerHTML = ""; // clearing contacts
+      
+      // Check if there are any contacts
+      if (contacts.length === 0) {
+        const emptyRow = document.createElement("tr");
+        emptyRow.innerHTML = `
+          <td colspan="4" class="text-center">No contacts found. Try a different search or add a new contact.</td>
+        `;
+        contactsList.appendChild(emptyRow);
+        return;
+      }
+      
+      // Display each contact
+      contacts.forEach((contact) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${contact.name}</td>
+          <td>${contact.email}</td>
+          <td>${contact.phone || ""}</td>
+          <td>
+              <button class="btn btn-warning btn-sm edit-contact" data-id="${contact.id}">
+                  Edit
+              </button>
+              <button class="btn btn-danger btn-sm delete-contact" data-id="${contact.id}">
+                  Delete
+              </button>
+          </td>
+        `;
+        contactsList.appendChild(row);
+      });
+
+      // Add event listeners to new buttons
+      addContactButtonListeners();
+    }
+  }
+
+  // Loading contacts
+  function loadContacts() {
+    if (contactsList) {
+      // Show loading indicator
+      contactsList.innerHTML = `
+        <tr>
+          <td colspan="4" class="text-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </td>
+        </tr>
+      `;
+
+      fetch("../../api/RetrieveContact.php", {
+        headers: {
+          "X-Requested-With": "XMLHttpRequest"
+        }
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.success) {
+            displayContacts(data.contacts);
           } else {
             // Display error message if contacts couldn't be loaded
             contactsList.innerHTML = `
               <tr>
-                <td colspan="3" class="text-center text-danger">
+                <td colspan="4" class="text-center text-danger">
                   Failed to load contacts: ${data.message || "Unknown error"}
                 </td>
               </tr>
@@ -80,7 +188,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           console.error("Error loading contacts:", error);
           contactsList.innerHTML = `
             <tr>
-              <td colspan="3" class="text-center text-danger">
+              <td colspan="4" class="text-center text-danger">
                 An error occurred while loading contacts. Please try again.
               </td>
             </tr>
