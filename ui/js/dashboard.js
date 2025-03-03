@@ -20,7 +20,8 @@ document.addEventListener("DOMContentLoaded", async function () {
   // Logout functionality
   if (logoutButton) {
     logoutButton.addEventListener("click", function() {
-      logout(); // This function is defined in auth.js
+      // Call the logout function from auth.js
+      logout();
     });
   }
 
