@@ -156,25 +156,27 @@ function displayContacts(contacts) {
               
               // Inline edit form with separate first and last name fields
               row.innerHTML = `
-                <td>
-                  <div class="row">
-                    <div class="col">
-                      <input type="text" class="form-control" placeholder="First name" value="${contact.first}" id="edit-first-${contactId}">
-                    </div>
-                    <div class="col">
-                      <input type="text" class="form-control" placeholder="Last name" value="${contact.last}" id="edit-last-${contactId}">
-                    </div>
+              <td>
+                <div class="row">
+                  <div class="col">
+                    <input type="text" class="form-control" placeholder="First name" value="${contact.first}" id="edit-first-${contactId}">
                   </div>
-                </td>
-                <td>
-                  <input type="email" class="form-control" placeholder="Email" value="${contact.email}" id="edit-email-${contactId}">
-                  <input type="tel" class="form-control mt-2" placeholder="Phone (optional)" value="${contact.phone || ''}" id="edit-phone-${contactId}">
-                </td>
-                <td>
-                  <button class="btn btn-success btn-sm save-edit" data-id="${contactId}">Save</button>
-                  <button class="btn btn-secondary btn-sm cancel-edit" data-id="${contactId}">Cancel</button>
-                </td>
-              `;
+                  <div class="col">
+                    <input type="text" class="form-control" placeholder="Last name" value="${contact.last}" id="edit-last-${contactId}">
+                  </div>
+                </div>
+              </td>
+              <td>
+                <input type="email" class="form-control" placeholder="Email" value="${contact.email}" id="edit-email-${contactId}">
+              </td>
+              <td>
+                <input type="tel" class="form-control" placeholder="Phone" value="${contact.phone || ''}" id="edit-phone-${contactId}">
+              </td>
+              <td>
+                <button class="btn btn-success btn-sm save-edit" data-id="${contactId}">Save</button>
+                <button class="btn btn-secondary btn-sm cancel-edit" data-id="${contactId}">Cancel</button>
+              </td>
+            `;
 
               // Add save and cancel handlers
               row.querySelector(".save-edit").addEventListener("click", function () {
