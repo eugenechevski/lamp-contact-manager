@@ -138,7 +138,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                   <i class="bi bi-pencil-square"></i>
                   Edit
               </button>
-              <button class="btn btn-secondary btn-sm delete-contact" data-id="${contact.id}">
+              <button class="btn btn-primary btn-sm delete-contact" data-id="${contact.id}">
                   <i class="bi bi-trash"></i>
                   Delete
               </button>
@@ -249,20 +249,26 @@ document.addEventListener("DOMContentLoaded", async function () {
         const contactId = this.getAttribute("data-id");
         
         // Fetch the contact details to get all fields including phone number
-        fetch(`../../api/RetrieveContact.php?id=${contactId}`)
+        fetch(`../../api/RetrieveContact.php?contact_id=${contactId}`, {
+          headers: {
+            "X-Requested-With": "XMLHttpRequest"
+          }
+        })
           .then((response) => response.json())
           .then((data) => {
+            console.log("Contact details response:", data);
             if (data.success && data.contacts && data.contacts.length > 0) {
               const contact = data.contacts[0];
+              console.log("Contact to edit:", contact);
               
               // Create a modal for editing
               const modalHTML = `
                 <div class="modal fade" id="editContactModal" tabindex="-1" aria-labelledby="editContactModalLabel" aria-hidden="true">
                   <div class="modal-dialog">
                     <div class="modal-content">
-                      <div class="modal-header bg-primary text-white">
+                      <div class="modal-header">
                         <h5 class="modal-title" id="editContactModalLabel">Edit Contact</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
                         <form id="editContactForm">
@@ -273,7 +279,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                               <span class="input-group-text">
                                 <i class="bi bi-person"></i>
                               </span>
-                              <input type="text" class="form-control" id="editFirstName" value="${contact.firstName || ''}" required>
+                              <input type="text" class="form-control" id="editFirstName" value="${contact.FIRST || ''}" required>
                             </div>
                           </div>
                           <div class="mb-3">
@@ -282,7 +288,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                               <span class="input-group-text">
                                 <i class="bi bi-person"></i>
                               </span>
-                              <input type="text" class="form-control" id="editLastName" value="${contact.lastName || ''}" required>
+                              <input type="text" class="form-control" id="editLastName" value="${contact.LAST || ''}" required>
                             </div>
                           </div>
                           <div class="mb-3">
@@ -291,7 +297,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                               <span class="input-group-text">
                                 <i class="bi bi-envelope"></i>
                               </span>
-                              <input type="email" class="form-control" id="editEmail" value="${contact.email || ''}" required>
+                              <input type="email" class="form-control" id="editEmail" value="${contact.EMAIL || ''}" required>
                             </div>
                           </div>
                           <div class="mb-3">
@@ -300,13 +306,13 @@ document.addEventListener("DOMContentLoaded", async function () {
                               <span class="input-group-text">
                                 <i class="bi bi-telephone"></i>
                               </span>
-                              <input type="tel" class="form-control" id="editPhone" value="${contact.phone || ''}">
+                              <input type="tel" class="form-control" id="editPhone" value="${contact.PHONE_NUMBER || ''}">
                             </div>
                           </div>
                         </form>
                       </div>
                       <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-outline-primary" data-bs-dismiss="modal">Cancel</button>
                         <button type="button" class="btn btn-primary" id="saveContactChanges">Save Changes</button>
                       </div>
                     </div>
@@ -325,24 +331,36 @@ document.addEventListener("DOMContentLoaded", async function () {
               
               // Handle save changes
               document.getElementById("saveContactChanges").addEventListener("click", function() {
+                const saveButton = this;
+                const cancelButton = document.querySelector('.modal-footer .btn-outline-primary');
+                
+                // Show loading state
+                saveButton.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...';
+                saveButton.disabled = true;
+                cancelButton.disabled = true;
+                
                 const updatedData = {
-                  ID: contactId,
+                  CONTACT_ID: contactId,
                   FIRST: document.getElementById("editFirstName").value.trim(),
                   LAST: document.getElementById("editLastName").value.trim(),
                   EMAIL: document.getElementById("editEmail").value.trim(),
                   PHONE_NUMBER: document.getElementById("editPhone").value.trim()
                 };
                 
+                console.log("Sending update with data:", updatedData);
+                
                 // Send update request
                 fetch("../../api/UpdateContact.php", {
                   method: "POST",
                   headers: {
                     "Content-Type": "application/json",
+                    "X-Requested-With": "XMLHttpRequest"
                   },
                   body: JSON.stringify(updatedData),
                 })
                   .then((response) => response.json())
                   .then((data) => {
+                    console.log("Update response:", data);
                     if (data.success) {
                       modal.hide();
                       // Remove modal from DOM after hiding
@@ -351,12 +369,47 @@ document.addEventListener("DOMContentLoaded", async function () {
                       });
                       loadContacts(); // Reload contacts to show updated data
                     } else {
-                      alert("Failed to update contact: " + (data.message || "Unknown error"));
+                      // Reset button state
+                      saveButton.innerHTML = 'Save Changes';
+                      saveButton.disabled = false;
+                      cancelButton.disabled = false;
+                      
+                      // Show error message in modal
+                      const modalBody = document.querySelector('.modal-body');
+                      const errorDiv = document.createElement('div');
+                      errorDiv.className = 'alert alert-danger mt-3';
+                      errorDiv.textContent = data.message || "Failed to update contact. Please try again.";
+                      
+                      // Remove any existing error messages
+                      const existingError = modalBody.querySelector('.alert');
+                      if (existingError) {
+                        existingError.remove();
+                      }
+                      
+                      modalBody.appendChild(errorDiv);
                     }
                   })
                   .catch((error) => {
                     console.error("Error updating contact:", error);
-                    alert("An error occurred. Please try again.");
+                    
+                    // Reset button state
+                    saveButton.innerHTML = 'Save Changes';
+                    saveButton.disabled = false;
+                    cancelButton.disabled = false;
+                    
+                    // Show error message in modal
+                    const modalBody = document.querySelector('.modal-body');
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'alert alert-danger mt-3';
+                    errorDiv.textContent = "An error occurred while updating the contact. Please try again.";
+                    
+                    // Remove any existing error messages
+                    const existingError = modalBody.querySelector('.alert');
+                    if (existingError) {
+                      existingError.remove();
+                    }
+                    
+                    modalBody.appendChild(errorDiv);
                   });
               });
               
@@ -381,24 +434,36 @@ document.addEventListener("DOMContentLoaded", async function () {
         const contactId = this.getAttribute("data-id");
         
         if (confirm("Are you sure you want to delete this contact?")) {
+          // Show loading state on the button
+          const originalHTML = this.innerHTML;
+          this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>';
+          this.disabled = true;
+          
           // Send delete request
           fetch("../../api/DeleteContact.php", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              "X-Requested-With": "XMLHttpRequest"
             },
-            body: JSON.stringify({ ID: contactId }),
+            body: JSON.stringify({ CONTACT_ID: contactId }),
           })
             .then((response) => response.json())
             .then((data) => {
               if (data.success) {
                 loadContacts(); // Reload contacts to show updated list
               } else {
+                // Reset button state
+                this.innerHTML = originalHTML;
+                this.disabled = false;
                 alert("Failed to delete contact: " + (data.message || "Unknown error"));
               }
             })
             .catch((error) => {
               console.error("Error deleting contact:", error);
+              // Reset button state
+              this.innerHTML = originalHTML;
+              this.disabled = false;
               alert("An error occurred. Please try again.");
             });
         }
