@@ -17,58 +17,60 @@
         <i class="bi bi-moon-stars"></i>
     </button>
 
-    <div class="container full-height-container" style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <div class="text-center mb-4">
-            <h1 class="display-5 fw-bold">Contact Manager</h1>
-            <p class="text-muted">Sign in to manage your contacts</p>
-        </div>
+    <div class="container full-height-container">
+        <div class="auth-container">
+            <div class="text-center auth-header">
+                <h1 class="display-5 fw-bold">Contact Manager</h1>
+                <p class="text-muted">Sign in to manage your contacts</p>
+            </div>
 
-        <div class="login-form">
-            <form id="loginForm" action="../../api/Login.php" method="POST">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-person"></i>
-                        </span>
-                        <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username">
+            <div class="login-form">
+                <form id="loginForm" action="../../api/Login.php" method="POST">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-person"></i>
+                            </span>
+                            <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username">
+                        </div>
+                        <div id="usernameError" class="error-message" style="display: none;"></div>
                     </div>
-                    <div id="usernameError" class="error-message" style="display: none;"></div>
-                </div>
-    
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="bi bi-lock"></i>
-                        </span>
-                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password">
+        
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="input-group">
+                            <span class="input-group-text">
+                                <i class="bi bi-lock"></i>
+                            </span>
+                            <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password">
+                        </div>
+                        <div id="passwordError" class="error-message" style="display: none;"></div>
                     </div>
-                    <div id="passwordError" class="error-message" style="display: none;"></div>
-                </div>
-    
-                <div class="d-grid gap-2 mb-3">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-box-arrow-in-right me-2"></i>
-                        Sign In
-                    </button>
-                </div>
-            </form>
+        
+                    <div class="d-grid gap-2 mb-3">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
+                            Sign In
+                        </button>
+                    </div>
+                </form>
 
-            <div class="d-flex flex-column align-items-center gap-3 mt-4">
-                <div class="text-center">
-                    <p class="mb-2">Don't have an account?</p>
-                    <a href="./create_account.html" id="createAccountLink" class="btn btn-outline-primary">
-                        <i class="bi bi-person-plus me-2"></i>
-                        Create Account
-                    </a>
-                </div>
-                
-                <div class="text-center">
-                    <a href="../../index.html" class="btn btn-link text-muted">
-                        <i class="bi bi-house me-2"></i>
-                        Back to Home
-                    </a>
+                <div class="d-flex flex-column align-items-center gap-3 mt-4">
+                    <div class="text-center">
+                        <p class="mb-2">Don't have an account?</p>
+                        <a href="./create_account.html" id="createAccountLink" class="btn btn-outline-primary">
+                            <i class="bi bi-person-plus me-2"></i>
+                            Create Account
+                        </a>
+                    </div>
+                    
+                    <div class="text-center">
+                        <a href="../../index.html" class="btn btn-link text-muted">
+                            <i class="bi bi-house me-2"></i>
+                            Back to Home
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
