@@ -1,52 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact Manager - Welcome</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Roboto:wght@300&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./ui/css/styles.css">
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="./ui/assets/logo.ico">
-    <style>
-        .hero-section {
-            padding: 80px 0;
-            text-align: center;
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 40px;
-        }
-        .feature-card {
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            height: 100%;
-            transition: transform 0.3s;
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-        .btn-cta {
-            padding: 12px 30px;
-            font-size: 18px;
-            margin: 0 10px;
-        }
-    </style>
 </head>
+
 <body>
-    <div class="container py-4">
+    <!-- Dark Mode Toggle -->
+    <button id="darkModeToggle" class="btn dark-mode-toggle" aria-label="Toggle dark mode">
+        <i class="bi bi-moon-stars"></i>
+    </button>
+
+    <main class="container full-height-container" style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <div class="hero-section">
-            <h1 class="display-4">Welcome to Contact Manager</h1>
-            <p class="lead">A simple and efficient way to manage your contacts</p>
-            <div class="mt-4">
-                <a href="./ui/pages/login.html" class="btn btn-primary btn-lg me-2 mb-2">Login</a>
-                <a href="./ui/pages/create_account.html" class="btn btn-outline-primary btn-lg mb-2">Create Account</a>
-            </div>
-            <button id="darkModeToggle" class="btn btn-secondary mt-3">Dark Mode</button>
+            <h1 class="fw-bold mb-4">Welcome to Contact Manager</h1>
+            <p class="lead text-muted mb-4">A simple and efficient way to manage your contacts</p>
+            <div class="d-flex flex-column flex-md-row align-items-center justify-content-center gap-3">
+                <a href="./ui/pages/login.html" class="btn btn-primary btn-lg">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>
+                    Sign In
+                </a>
+                <a href="./ui/pages/create_account.html" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-person-plus me-2"></i>
+                    Create Account
+                </a>
             </div>
         </div>
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="./ui/js/auth.js"></script>
@@ -54,4 +42,5 @@
     <script src="./ui/js/dark-mode.js"></script>
 
 </body>
+
 </html>

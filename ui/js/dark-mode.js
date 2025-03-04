@@ -21,13 +21,23 @@ document.addEventListener("DOMContentLoaded", function () {
     function enableDarkMode() {
       body.classList.add("dark-mode");
       localStorage.setItem("darkMode", "enabled");
-      darkModeToggle.textContent = "Light Mode";
+      
+      // Update icon for light mode toggle
+      if (darkModeToggle.classList.contains('dark-mode-toggle')) {
+        darkModeToggle.innerHTML = '<i class="bi bi-sun"></i>';
+        darkModeToggle.setAttribute('aria-label', 'Toggle light mode');
+      }
     }
   
     function disableDarkMode() {
       body.classList.remove("dark-mode");
       localStorage.setItem("darkMode", "disabled");
-      darkModeToggle.textContent = "Dark Mode";
+      
+      // Update icon for dark mode toggle
+      if (darkModeToggle.classList.contains('dark-mode-toggle')) {
+        darkModeToggle.innerHTML = '<i class="bi bi-moon-stars"></i>';
+        darkModeToggle.setAttribute('aria-label', 'Toggle dark mode');
+      }
     }
   });
   
